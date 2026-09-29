@@ -1,0 +1,29 @@
+; Engine configuration file.
+; Edit through Project > Project Settings in the editor when you can.
+; This file is a merge-conflict hotspot, so keep changes to it in their own small PRs.
+
+config_version=5
+
+[application]
+
+config/name="IST Club Fall Game"
+config/description="Collaborative 3D FPS - IST Club, Fall 2026"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.4", "Forward Plus")
+
+[autoload]
+
+GameManager="*res://scripts/core/game_manager.gd"
+UIManager="*res://scripts/ui/ui_manager.gd"
+
+[layer_names]
+
+3d_physics/layer_1="world"
+3d_physics/layer_2="player"
+3d_physics/layer_3="enemies"
+3d_physics/layer_4="projectiles"
+3d_physics/layer_5="pickups"
+
+[rendering]
+
+renderer/rendering_method="forward_plus"

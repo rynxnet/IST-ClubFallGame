@@ -1,0 +1,39 @@
+# Opens the project headless on every push/PR and fails if Godot reports
+# any scene or script errors. Keep GODOT_VERSION in sync with the README.
+name: Godot check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: 4.4.1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Download Godot
+        run: |
+          curl -sSLo "$RUNNER_TEMP/godot.zip" \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP"
+          echo "GODOT=$RUNNER_TEMP/Godot_v${GODOT_VERSION}-stable_linux.x86_64" >> "$GITHUB_ENV"
+
+      - name: Import project
+        run: $GODOT --headless --import 2>&1 | tee import.log
+
+      - name: Run main scene briefly
+        run: $GODOT --headless --quit-after 120 2>&1 | tee run.log
+
+      - name: Fail on errors
+        run: |
+          if grep -E "ERROR|Parse Error" import.log run.log; then
+            echo "::error::Godot reported errors, see the log above."
+            exit 1
+          fi
+          echo "No errors."

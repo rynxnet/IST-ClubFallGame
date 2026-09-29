@@ -1,0 +1,48 @@
+# Normalize line endings for text files
+* text=auto eol=lf
+
+# Godot text formats: keep as text so they diff and merge
+*.gd     text eol=lf
+*.tscn   text eol=lf
+*.tres   text eol=lf
+*.import text eol=lf
+*.godot  text eol=lf
+*.cfg    text eol=lf
+*.md     text eol=lf
+
+# ---- Git LFS ----
+# 3D models / source files
+*.blend filter=lfs diff=lfs merge=lfs -text
+*.fbx   filter=lfs diff=lfs merge=lfs -text
+*.glb   filter=lfs diff=lfs merge=lfs -text
+*.gltf  filter=lfs diff=lfs merge=lfs -text
+*.obj   filter=lfs diff=lfs merge=lfs -text
+*.bin   filter=lfs diff=lfs merge=lfs -text
+
+# Images / textures
+*.png   filter=lfs diff=lfs merge=lfs -text
+*.jpg   filter=lfs diff=lfs merge=lfs -text
+*.jpeg  filter=lfs diff=lfs merge=lfs -text
+*.tga   filter=lfs diff=lfs merge=lfs -text
+*.webp  filter=lfs diff=lfs merge=lfs -text
+*.exr   filter=lfs diff=lfs merge=lfs -text
+*.hdr   filter=lfs diff=lfs merge=lfs -text
+*.psd   filter=lfs diff=lfs merge=lfs -text
+
+# Audio
+*.wav   filter=lfs diff=lfs merge=lfs -text
+*.ogg   filter=lfs diff=lfs merge=lfs -text
+*.mp3   filter=lfs diff=lfs merge=lfs -text
+
+# Fonts
+*.ttf   filter=lfs diff=lfs merge=lfs -text
+*.otf   filter=lfs diff=lfs merge=lfs -text
+
+# Godot binary resources and imported binaries
+*.res   filter=lfs diff=lfs merge=lfs -text
+*.scn   filter=lfs diff=lfs merge=lfs -text
+*.ctex  filter=lfs diff=lfs merge=lfs -text
+*.stex  filter=lfs diff=lfs merge=lfs -text
+*.mesh  filter=lfs diff=lfs merge=lfs -text
+*.anim  filter=lfs diff=lfs merge=lfs -text
+*.lmbake filter=lfs diff=lfs merge=lfs -text
