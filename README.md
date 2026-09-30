@@ -1,9 +1,15 @@
 # IST Club Fall Game
 
-A collaborative first-person shooter built in **Godot 4** by the IST club, Fall 2026.
+A collaborative 3D game built in **Godot 4** by the IST club, Fall 2026, using real 3D models.
+
+The genre and style are still open. It could end up a shooter, an adventure, a platformer, or
+something else. The club decides that together, and this repo gives everyone a shared place
+to build it.
 
 For now this repo is only a **skeleton**: the folders, config, placeholder scenes, and stub
-scripts are in place, and no gameplay has been written yet. The work is divided into issues
+scripts are in place, and no gameplay has been written yet. The starter systems (player,
+weapons, enemies) are just a common starting point, so rename or replace them as the game
+takes shape. The work is divided into issues
 that club members claim and build in parallel. [ARCHITECTURE.md](ARCHITECTURE.md) explains how
 the pieces fit together, and [CONTRIBUTING.md](CONTRIBUTING.md) explains how to pick one up.
 
