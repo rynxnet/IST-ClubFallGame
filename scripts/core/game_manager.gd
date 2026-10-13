@@ -68,6 +68,7 @@ func start_match(new_map: GameMap) -> void:
 	state = MatchState.PLAYING
 	get_tree().paused = false
 
+	Sfx.warm_up()
 	_spawn_player()
 	_set_mouse_captured(true)
 	match_started.emit()
