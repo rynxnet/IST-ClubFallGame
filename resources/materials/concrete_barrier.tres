@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3]
+
+[ext_resource type="Shader" path="res://resources/materials/concrete.gdshader" id="1_8qdre"]
+[ext_resource type="Texture2D" path="res://resources/materials/noise_grey.tres" id="2_yk6c3"]
+[ext_resource type="Texture2D" path="res://resources/materials/noise_normal.tres" id="3_rnang"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_8qdre")
+shader_parameter/base_color = Color(0.6, 0.59, 0.56, 1)
+shader_parameter/stain_color = Color(0.42, 0.41, 0.38, 1)
+shader_parameter/noise_tex = ExtResource("2_yk6c3")
+shader_parameter/normal_tex = ExtResource("3_rnang")
+shader_parameter/grain_scale = 0.9
+shader_parameter/stain_scale = null
+shader_parameter/stain_strength = 0.35
+shader_parameter/normal_strength = null
+shader_parameter/joint_spacing = Vector2(0, 0)
+shader_parameter/joint_width = null
+shader_parameter/roughness_base = null

@@ -1,37 +1,20 @@
-[gd_resource type="StandardMaterial3D" load_steps=6 format=3]
+[gd_resource type="ShaderMaterial" load_steps=4 format=3]
 
-[sub_resource type="Gradient" id="Gradient_6jasu"]
-offsets = PackedFloat32Array(0, 0.4, 0.7, 1)
-colors = PackedColorArray(0.34, 0.335, 0.32, 1, 0.42, 0.41, 0.39, 1, 0.46, 0.45, 0.43, 1, 0.51, 0.5, 0.47, 1)
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_qmvsy"]
-seed = 11
-frequency = 0.02
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_iy7mb"]
-seamless = true
-color_ramp = SubResource("Gradient_6jasu")
-noise = SubResource("FastNoiseLite_qmvsy")
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_6b6uc"]
-noise_type = 2
-seed = 12
-frequency = 0.08
-fractal_octaves = 2
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_1a1wc"]
-seamless = true
-as_normal_map = true
-bump_strength = 6.0
-noise = SubResource("FastNoiseLite_6b6uc")
+[ext_resource type="Shader" path="res://resources/materials/concrete.gdshader" id="1_6b6uc"]
+[ext_resource type="Texture2D" path="res://resources/materials/noise_grey.tres" id="2_1a1wc"]
+[ext_resource type="Texture2D" path="res://resources/materials/noise_normal.tres" id="3_4b76x"]
 
 [resource]
-albedo_texture = SubResource("NoiseTexture2D_iy7mb")
-roughness = 0.92
-normal_enabled = true
-normal_scale = 0.6
-normal_texture = SubResource("NoiseTexture2D_1a1wc")
-uv1_scale = Vector3(0.35, 0.35, 0.35)
-uv1_triplanar = true
-uv1_world_triplanar = true
-texture_filter = 5
+render_priority = 0
+shader = ExtResource("1_6b6uc")
+shader_parameter/base_color = Color(0.46, 0.45, 0.43, 1)
+shader_parameter/stain_color = Color(0.3, 0.29, 0.27, 1)
+shader_parameter/noise_tex = ExtResource("2_1a1wc")
+shader_parameter/normal_tex = ExtResource("3_4b76x")
+shader_parameter/grain_scale = null
+shader_parameter/stain_scale = null
+shader_parameter/stain_strength = null
+shader_parameter/normal_strength = null
+shader_parameter/joint_spacing = Vector2(4, 4)
+shader_parameter/joint_width = null
+shader_parameter/roughness_base = null

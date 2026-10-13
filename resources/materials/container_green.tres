@@ -1,39 +1,16 @@
-[gd_resource type="StandardMaterial3D" load_steps=6 format=3]
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
 
-[sub_resource type="Gradient" id="Gradient_ha0ry"]
-offsets = PackedFloat32Array(0, 0.18, 0.26, 0.7, 1)
-colors = PackedColorArray(0.25, 0.13, 0.07, 1, 0.38, 0.2, 0.1, 1, 0.16, 0.26, 0.16, 1, 0.22, 0.33, 0.2, 1, 0.298, 0.397, 0.28, 1)
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_gt2q0"]
-seed = 61
-frequency = 0.012
-fractal_octaves = 6
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_5y0hp"]
-seamless = true
-color_ramp = SubResource("Gradient_ha0ry")
-noise = SubResource("FastNoiseLite_gt2q0")
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_0tkqe"]
-noise_type = 2
-seed = 62
-frequency = 0.05
-fractal_octaves = 2
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_08174"]
-seamless = true
-as_normal_map = true
-bump_strength = 3.0
-noise = SubResource("FastNoiseLite_0tkqe")
+[ext_resource type="Shader" path="res://resources/materials/container.gdshader" id="1_5y0hp"]
+[ext_resource type="Texture2D" path="res://resources/materials/noise_grey.tres" id="2_0tkqe"]
 
 [resource]
-albedo_texture = SubResource("NoiseTexture2D_5y0hp")
-metallic = 0.35
-roughness = 0.55
-normal_enabled = true
-normal_scale = 0.5
-normal_texture = SubResource("NoiseTexture2D_08174")
-uv1_scale = Vector3(0.3, 0.3, 0.3)
-uv1_triplanar = true
-uv1_world_triplanar = true
-texture_filter = 5
+render_priority = 0
+shader = ExtResource("1_5y0hp")
+shader_parameter/paint_color = Color(0.17, 0.28, 0.17, 1)
+shader_parameter/rust_color = null
+shader_parameter/noise_tex = ExtResource("2_0tkqe")
+shader_parameter/rust_amount = 0.3
+shader_parameter/rib_pitch = null
+shader_parameter/rib_depth = null
+shader_parameter/half_height = null
+shader_parameter/rail_size = null
