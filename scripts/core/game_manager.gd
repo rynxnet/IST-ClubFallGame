@@ -21,9 +21,8 @@ signal pause_changed(paused: bool)
 enum MatchState { NONE, PLAYING, WON, LOST }
 
 const PLAYER_SCENE := preload("res://scenes/player/player.tscn")
-const ENEMY_SCENES: Array[PackedScene] = [
-	preload("res://scenes/enemies/grunt.tscn"),
-]
+const GRUNT_SCENE := preload("res://scenes/enemies/grunt.tscn")
+const SOLDIER_SCENE := preload("res://scenes/enemies/soldier.tscn")
 
 var waves_to_win: int = 5
 var time_between_waves: float = 3.0
@@ -36,7 +35,7 @@ var enemies_remaining: int = 0
 var map: GameMap
 var player: PlayerController
 
-var _enemies_to_spawn: int = 0
+var _spawn_queue: Array[PackedScene] = []
 var _spawn_index: int = 0
 var _wave_timer: Timer
 var _spawn_timer: Timer
@@ -65,7 +64,7 @@ func start_match(new_map: GameMap) -> void:
 	score = 0
 	wave = 0
 	enemies_remaining = 0
-	_enemies_to_spawn = 0
+	_spawn_queue.clear()
 	state = MatchState.PLAYING
 	get_tree().paused = false
 
@@ -105,29 +104,40 @@ func _spawn_player() -> void:
 
 func _start_wave() -> void:
 	wave += 1
-	_enemies_to_spawn = 1 + wave * 2
-	enemies_remaining = _enemies_to_spawn
+	_spawn_queue = _build_wave(wave)
+	enemies_remaining = _spawn_queue.size()
 	wave_started.emit(wave, waves_to_win)
 	enemies_remaining_changed.emit(enemies_remaining)
 	_spawn_next_enemy()
 
 
+## Wave composition: `1 + 2 × wave` enemies. Wave 1 is all grunts (melee rushers); from wave 2
+## on, each wave swaps one more grunt for a rifle-armed soldier, mixed into the spawn order.
+func _build_wave(wave_number: int) -> Array[PackedScene]:
+	var total := 1 + wave_number * 2
+	var soldiers := clampi(wave_number - 1, 0, total)
+	var scenes: Array[PackedScene] = []
+	for i in total:
+		scenes.append(SOLDIER_SCENE if i < soldiers else GRUNT_SCENE)
+	scenes.shuffle()
+	return scenes
+
+
 # Enemies trickle in one at a time so they don't spawn inside each other.
 func _spawn_next_enemy() -> void:
-	if state != MatchState.PLAYING or _enemies_to_spawn <= 0:
+	if state != MatchState.PLAYING or _spawn_queue.is_empty():
 		return
 	var spawn_points := map.get_enemy_spawn_points()
 	var spawn_point := spawn_points[_spawn_index % spawn_points.size()]
 	_spawn_index += 1
 
-	var enemy: EnemyBase = ENEMY_SCENES.pick_random().instantiate()
+	var enemy: EnemyBase = _spawn_queue.pop_back().instantiate()
 	enemy.move_speed *= 1.0 + 0.08 * (wave - 1)
 	map.add_child(enemy)
 	enemy.global_position = spawn_point.global_position
 	enemy.died.connect(_on_enemy_died)
 
-	_enemies_to_spawn -= 1
-	if _enemies_to_spawn > 0:
+	if not _spawn_queue.is_empty():
 		_spawn_timer.start(time_between_spawns)
 
 
