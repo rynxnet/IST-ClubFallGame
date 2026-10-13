@@ -2,7 +2,9 @@
 
 This is a short overview of how the game is put together. The repo ships a small **starter
 loop** (first-person wave survival in a greybox arena) so there's something playable to build
-on. Every piece of it is meant to be replaced or extended. The list at the bottom is written
+on. Every piece of it is meant to be replaced or extended. Art is still primitives + procedural
+materials and sound is synthesized (`scripts/core/sfx.gd`), so swapping in real assets is the
+biggest open area. The list at the bottom is written
 so each item can become a GitHub issue people can claim.
 
 ## How the pieces fit
@@ -59,13 +61,15 @@ GameManager spawns the player at the map's `PlayerSpawn`, then runs waves of ene
 a method:
 
 ```gdscript
-func take_damage(amount: float, source: Node = null) -> void:
-    health.take_damage(amount, source)
+func take_damage(amount: float, source: Node = null) -> bool:  # true if this hit killed
+    return health.take_damage(amount, source)
 ```
 
 Weapons and enemies only ever call `take_damage()` on whatever they hit (checking
 `has_method("take_damage")` first). `Health` emits `health_changed(current, maximum)` and
-`died(source)`. A breakable crate, an explosive barrel, or a turret just needs the same two pieces.
+`died(source)`, and can regenerate (`regen_delay`, `regen_per_second`).
+**Headshots:** a CollisionShape3D with metadata `damage_multiplier` (enemy heads use 2.5)
+scales damage; weapons emit `hit_landed(headshot, killed)` for the hit marker. A breakable crate, an explosive barrel, or a turret just needs the same two pieces.
 
 **Groups.** The player is in the `player` group while alive (enemies find their target that way)
 and enemies are in `enemies`.
@@ -81,9 +85,10 @@ in the Inspector. Instance it as another child of the player's `Head/Camera3D/We
 Scroll wheel / Q / E already cycle between weapons.
 
 **A new enemy:** make `scripts/enemies/<name>.gd` with `extends EnemyBase` and override
-`_attack(target)`. Build the scene like `scenes/enemies/grunt.tscn` (CharacterBody3D on layer 3
-with `Health`, `NavigationAgent3D`, and a `Body` mesh). Add it to `ENEMY_SCENES` in
-`game_manager.gd` so waves can spawn it.
+`_attack(target)` (and optionally `_wants_to_attack` / `_attack_update` for ranged behaviour,
+see `soldier.gd`). Build the scene like `scenes/enemies/grunt.tscn` (CharacterBody3D on layer 3
+with `Health`, `NavigationAgent3D`, body + `Head` hitboxes, and a `HumanoidRig`). Add it to
+`_build_wave()` in `game_manager.gd` so waves can spawn it.
 
 **A new map:** make a scene in `scenes/maps/` whose root uses `scripts/maps/game_map.gd` and
 contains `PlayerSpawn` (Marker3D), `EnemySpawns` (Node3D with Marker3D children), and a
@@ -104,36 +109,35 @@ what needs to exist first. ✅ means a starter version exists; it's still fair g
 
 ### Player (`scenes/player/`, `scripts/player/`)
 
-4. **Player movement**: ✅ walk, sprint, jump, gravity. ⬜ **Crouch** (the `crouch` action is
-   already mapped). *Good first issue.*
-5. ✅ **Mouse look & camera**: sensitivity is an export on PlayerController.
+4. ✅ **Player movement**: walk, sprint (lowers the gun), jump, crouch (fits behind barriers).
+5. ✅ **Mouse look & camera**: recoil, damage flinch, landing dip, weapon sway/bob (`weapon_holder.gd`).
 6. ✅ **Player health & death**: damage flash on the HUD, camera drops on death.
 7. ✅ **Weapon holding & switching**: cycling works; there's only one weapon to cycle so far.
-8. ⬜ **Aim down sights** using the `aim` action (zoom FOV, move weapon to center). *Depends on: 7*
+8. ✅ **Aim down sights**: FOV zoom to `aim_fov`, red dot aligned via the weapon's `aim_position`.
 9. ⬜ **Health pickups / ammo pickups** (physics layer 5 is reserved). *Depends on: 6, 10*
 
 ### Weapons (`scenes/weapons/`, `scripts/weapons/`)
 
-10. ✅ **WeaponBase core**: fire rate, magazine, reserve, reload, auto-reload when empty.
+10. ✅ **WeaponBase core**: fire rate, spread model (hip/ADS/move/air/crouch + bloom), recoil, tactical (30+1) and empty reloads.
 11. ✅ **Hitscan weapon**: `HitscanWeapon` + `rifle.tscn`.
 12. ⬜ **Second hitscan weapon** (pistol or shotgun with spread). *Good first issue.*
 13. ⬜ **Projectile weapon** (grenade/rocket) extending WeaponBase, using physics layer 4.
-14. **Weapon feedback**: ✅ muzzle flash light, recoil kick, impact puffs.
-    ⬜ fire/reload sounds, impact decals, reload animation, camera shake.
+14. ✅ **Weapon feedback**: muzzle flash, tracers, impact particles, bullet-hole decals, reload animation, hit markers.
+    ⬜ real recorded sounds (drop `assets/audio/<name>.ogg` to replace a synthesized one).
 
 ### Enemies (`scenes/enemies/`, `scripts/enemies/`)
 
-15. ✅ **EnemyBase core**: health, death, hit flash, `died` signal.
+15. ✅ **EnemyBase core**: health, stagger, line of sight, death animation, `died` signal.
 16. ✅ **Navigation & AI states**: idle → chase → attack with NavigationAgent3D.
-17. ✅ **First enemy type**: `Grunt` (melee).
-18. ⬜ **Ranged enemy** that uses a WeaponBase or throws projectiles. *Depends on: 13 or 11*
+17. ✅ **First enemy type**: `Grunt` (melee rusher).
+18. ✅ **Ranged enemy**: `Soldier` fires 3-round bursts with an `enemy_rifle.tscn` when it can see you.
 19. ⬜ **Smarter AI**: line-of-sight checks, flanking, avoidance between enemies
     (NavigationAgent3D has `avoidance_enabled`).
 
 ### Game flow (`scripts/core/`)
 
 20. ✅ **Match flow**: start, win (survive `waves_to_win`), lose, restart.
-21. ✅ **Waves**: each wave spawns `1 + 2 × wave` enemies, a bit faster each wave.
+21. ✅ **Waves**: `1 + 2 × wave` enemies; from wave 2, `wave - 1` of them are Soldiers.
 22. ⬜ **Wave design**: mix enemy types per wave, bosses, tuning. *Depends on: 18*
 23. ⬜ **Map loading**: GameManager picks and swaps maps into `main.tscn`. *Depends on: a second map*
 24. ⬜ **High score** saved to `user://`.
@@ -151,7 +155,7 @@ what needs to exist first. ✅ means a starter version exists; it's still fair g
 30. ⬜ **Weapon models** (one issue per weapon), replacing the box rifle
 31. ⬜ **Enemy model & animations**, replacing the capsule
 32. ⬜ **Environment kit**: modular walls, floors, props to replace the CSG greybox
-33. ⬜ **Sound effects**: weapons, footsteps, hits, UI clicks
+33. ⬜ **Sound effects**: replace the synthesized placeholders with recorded CC0 audio
 34. ⬜ **Music**: menu and in-game tracks
 35. ⬜ **UI art & fonts**: crosshair, icons, HUD font
 

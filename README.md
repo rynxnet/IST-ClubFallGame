@@ -6,9 +6,11 @@ The genre and style are still open. The club decides that together, and this rep
 everyone a shared place to build it.
 
 To have something playable from day one, the repo ships a small **starter loop**: a
-first-person **wave survival** game in a greybox arena. You have a rifle, enemies chase you
-down, and you win by surviving 5 waves. Everything is placeholder shapes (no art yet) and every
-system is meant to be extended, reskinned, or replaced as the real game takes shape.
+first-person **wave survival** game in a concrete container yard. You have a carbine with a
+red-dot sight; melee rushers and riflemen come at you in waves, and you win by surviving 5.
+It aims for a grounded feel (aim down sights, recoil, crouching behind cover, headshots), but
+all art is still built from primitive shapes and procedural materials, and the sounds are
+synthesized placeholders. Every system is meant to be extended, reskinned, or replaced.
 
 The work is divided into issues that club members claim and build in parallel.
 [ARCHITECTURE.md](ARCHITECTURE.md) explains how the pieces fit together and lists what's built
@@ -45,14 +47,15 @@ git lfs pull               # fetch the real binary assets
 | Move                | W A S D                 |
 | Look                | Mouse                   |
 | Jump / Sprint       | Space / Shift           |
+| Crouch              | Ctrl or C (hold)        |
+| Aim down sights     | Right mouse (hold)      |
 | Fire                | Left mouse (hold)       |
 | Reload              | R (also automatic when empty) |
 | Switch weapon       | Mouse wheel, Q / E      |
 | Pause               | Esc or P                |
 | Recapture the mouse | Click in the game window |
 
-`crouch` (Ctrl / C) and `aim` (right mouse) are mapped but not implemented yet. They're open
-issues. Change bindings in **Project > Project Settings > Input Map**.
+Change bindings in **Project > Project Settings > Input Map**.
 
 ## Folder map
 
