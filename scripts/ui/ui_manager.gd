@@ -2,8 +2,9 @@ extends CanvasLayer
 ## UIManager: shows and hides every screen and the HUD. Registered as an autoload,
 ## so it's reachable as `UIManager`.
 ##
-## Listens to GameManager (match state), PlayerController (health), and WeaponBase (ammo)
-## and only displays them. Menu buttons call into GameManager, and nothing else.
+## Listens to GameManager (match state), PlayerController (health), and WeaponBase (ammo,
+## hits) and only displays them. Menu buttons call into GameManager, and nothing else.
+## Each frame it reads the player's spread and aiming state for the dynamic crosshair.
 ##
 ## No class_name, because an autoload name and a class_name can't be the same.
 
@@ -15,6 +16,7 @@ var hud: Hud
 var pause_menu: PauseMenu
 var game_over_screen: GameOverScreen
 
+var _player: PlayerController
 var _weapon: WeaponBase
 
 
@@ -42,6 +44,14 @@ func _ready() -> void:
 	game_over_screen.quit_pressed.connect(GameManager.quit)
 
 
+func _process(_delta: float) -> void:
+	if not hud.visible or not is_instance_valid(_player) or not is_instance_valid(_weapon):
+		return
+	# is_sprinting is read loosely so the HUD works with or without a sprint state.
+	var hide_crosshair: bool = _player.is_aiming or _player.get(&"is_sprinting") == true or not _weapon.is_equipped
+	hud.set_crosshair(_weapon.get_spread_degrees(), _player.camera.fov, not hide_crosshair)
+
+
 func _on_match_started() -> void:
 	pause_menu.hide()
 	game_over_screen.hide()
@@ -63,6 +73,7 @@ func _on_pause_changed(paused: bool) -> void:
 
 
 func _on_player_spawned(player: PlayerController) -> void:
+	_player = player
 	player.health_changed.connect(hud.set_health)
 	player.weapon_changed.connect(_track_weapon)
 	hud.set_health(player.health.current, player.health.max_health)
@@ -75,11 +86,14 @@ func _track_weapon(weapon: WeaponBase) -> void:
 		_weapon.ammo_changed.disconnect(hud.set_ammo)
 		_weapon.reload_started.disconnect(_on_reload_started)
 		_weapon.reload_finished.disconnect(_on_reload_finished)
+		_weapon.hit_landed.disconnect(_on_hit_landed)
 	_weapon = weapon
 	weapon.ammo_changed.connect(hud.set_ammo)
 	weapon.reload_started.connect(_on_reload_started)
 	weapon.reload_finished.connect(_on_reload_finished)
+	weapon.hit_landed.connect(_on_hit_landed)
 	hud.set_weapon_name(weapon.display_name)
+	hud.set_magazine_size(weapon.magazine_size)
 	hud.set_ammo(weapon.ammo_in_magazine, weapon.reserve_ammo)
 	hud.set_reloading(weapon.is_reloading())
 
@@ -90,3 +104,13 @@ func _on_reload_started() -> void:
 
 func _on_reload_finished() -> void:
 	hud.set_reloading(false)
+
+
+func _on_hit_landed(headshot: bool, killed: bool) -> void:
+	hud.show_hit_marker(headshot, killed)
+	if headshot:
+		Sfx.play(&"headshot", self)
+	if killed:
+		Sfx.play(&"kill_confirm", self)
+	elif not headshot:
+		Sfx.play(&"hitmarker", self)

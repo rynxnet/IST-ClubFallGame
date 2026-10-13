@@ -1,10 +1,15 @@
 class_name WeaponBase
 extends Node3D
-## Shared base every weapon extends. Handles ammo, fire rate, and reloading.
+## Shared base every weapon extends. Handles ammo, fire rate, accuracy, and reloading.
 ## Subclasses override `_shoot()` to decide what one shot does (raycast, projectile, ...).
 ##
-## The owner (player or enemy) calls `equip()`, `try_fire()`, and `reload()`.
-## UIManager listens to `ammo_changed` / `reload_started` / `reload_finished`.
+## The owner (player or enemy) calls `equip()`, `try_fire()`, `reload()`, and `set_handling()`.
+## UIManager listens to `ammo_changed` / `reload_started` / `reload_finished` / `hit_landed`.
+##
+## Reloads model a closed-bolt rifle: a tactical reload (rounds left) keeps one in the chamber,
+## so the weapon ends up with `magazine_size + 1`; an empty reload takes `empty_reload_time`
+## (the bolt has to be released) and gives `magazine_size`. `ammo_in_magazine` counts the
+## chambered round too.
 
 signal ammo_changed(in_magazine: int, reserve: int)
 signal fired
@@ -12,6 +17,10 @@ signal reload_started
 signal reload_finished
 ## Emitted when a shot damages something. UIManager shows a hit marker.
 signal hit_landed(headshot: bool, killed: bool)
+
+## Sounds played during a reload, at these fractions of its length.
+const TACTICAL_RELOAD_CUES: Array = [[0.18, &"reload_out"], [0.62, &"reload_in"]]
+const EMPTY_RELOAD_CUES: Array = [[0.14, &"reload_out"], [0.5, &"reload_in"], [0.8, &"bolt"]]
 
 @export var display_name: String = "Weapon"
 @export var damage: float = 20.0
@@ -21,7 +30,10 @@ signal hit_landed(headshot: bool, killed: bool)
 @export var automatic: bool = true
 @export var magazine_size: int = 30
 @export var reserve_ammo: int = 300
+## Reload with rounds still in the weapon.
 @export var reload_time: float = 1.5
+## Reload from empty: slower, because the bolt has to be released.
+@export var empty_reload_time: float = 2.0
 ## What shots can hit. Default: world + enemies.
 @export_flags_3d_physics var hit_mask: int = 0b101
 
@@ -59,11 +71,18 @@ var aim_origin: Node3D
 
 var _cooldown: float = 0.0
 var _reload_left: float = 0.0
+var _reload_duration: float = 0.0
+var _empty_reload: bool = false
+var _reload_cues: Array = []
+var _reload_cue_index: int = 0
 var _bloom: float = 0.0
 var _aiming: bool = false
 var _move_ratio: float = 0.0
 var _airborne: bool = false
 var _crouching: bool = false
+# One dry-fire click per trigger pull: holding the trigger calls try_fire() every physics frame.
+var _last_trigger_frame: int = -10
+var _dry_fire_ready: bool = true
 
 
 func _ready() -> void:
@@ -75,12 +94,28 @@ func _physics_process(delta: float) -> void:
 	_bloom = move_toward(_bloom, 0.0, bloom_recovery * delta)
 	if _reload_left > 0.0:
 		_reload_left -= delta
+		var progress := 1.0 - _reload_left / _reload_duration
+		while _reload_cue_index < _reload_cues.size() and progress >= _reload_cues[_reload_cue_index][0]:
+			_play_reload_cue(_reload_cues[_reload_cue_index][1])
+			_reload_cue_index += 1
 		if _reload_left <= 0.0:
 			_finish_reload()
 
 
 func is_reloading() -> bool:
 	return _reload_left > 0.0
+
+
+## True while reloading from an empty weapon (the slower reload with a bolt release).
+func is_empty_reload() -> bool:
+	return is_reloading() and _empty_reload
+
+
+## 0..1 through the current reload, or 0 when not reloading.
+func get_reload_progress() -> float:
+	if not is_reloading():
+		return 0.0
+	return clampf(1.0 - _reload_left / _reload_duration, 0.0, 1.0)
 
 
 ## Called every physics frame by the wielder so accuracy reflects what they're doing.
@@ -122,12 +157,22 @@ func can_fire() -> bool:
 
 
 ## Fires one shot if possible. Returns true if a shot happened.
+## Pulling the trigger on an empty weapon clicks once, then starts a reload.
 func try_fire() -> bool:
+	var frame := Engine.get_physics_frames()
+	if frame - _last_trigger_frame > 1:
+		_dry_fire_ready = true
+	_last_trigger_frame = frame
+
 	if not can_fire():
-		if is_equipped and ammo_in_magazine == 0:
+		if is_equipped and ammo_in_magazine == 0 and not is_reloading() and _cooldown <= 0.0:
+			if _dry_fire_ready:
+				_dry_fire_ready = false
+				Sfx.play_at(&"dry_fire", global_position, self)
 			reload()
 		return false
 	_cooldown = 1.0 / fire_rate
+	_dry_fire_ready = true
 	ammo_in_magazine -= 1
 	_shoot()
 	_bloom = minf(_bloom + bloom_per_shot, max_bloom)
@@ -136,10 +181,21 @@ func try_fire() -> bool:
 	return true
 
 
+## Rounds the weapon holds after a reload from its current state.
+func get_reload_capacity() -> int:
+	return magazine_size + 1 if ammo_in_magazine > 0 else magazine_size
+
+
 func reload() -> void:
-	if not is_equipped or is_reloading() or ammo_in_magazine == magazine_size or reserve_ammo <= 0:
+	if not is_equipped or is_reloading() or reserve_ammo <= 0:
 		return
-	_reload_left = reload_time
+	if ammo_in_magazine >= get_reload_capacity():
+		return
+	_empty_reload = ammo_in_magazine == 0
+	_reload_duration = maxf(empty_reload_time if _empty_reload else reload_time, 0.001)
+	_reload_left = _reload_duration
+	_reload_cues = EMPTY_RELOAD_CUES if _empty_reload else TACTICAL_RELOAD_CUES
+	_reload_cue_index = 0
 	reload_started.emit()
 
 
@@ -152,9 +208,16 @@ func _shoot() -> void:
 	pass
 
 
+## A reload step (`reload_out`, `reload_in`, `bolt`) happens now. Subclasses can extend this
+## to animate; call super() to keep the sound.
+func _play_reload_cue(cue: StringName) -> void:
+	Sfx.play_at(cue, global_position, self)
+
+
 func _finish_reload() -> void:
 	_reload_left = 0.0
-	var taken := mini(magazine_size - ammo_in_magazine, reserve_ammo)
+	var capacity := magazine_size if _empty_reload else magazine_size + 1
+	var taken := mini(capacity - ammo_in_magazine, reserve_ammo)
 	reserve_ammo -= taken
 	ammo_in_magazine += taken
 	reload_finished.emit()
