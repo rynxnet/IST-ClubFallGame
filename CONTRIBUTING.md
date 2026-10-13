@@ -69,3 +69,7 @@ Note the source and license in the PR description.
 - Systems talk to each other through **signals** (see [ARCHITECTURE.md](ARCHITECTURE.md)),
   not by reaching into each other's nodes.
 - Don't commit the `.godot/` folder (it's already gitignored).
+- **Do** commit the `.uid` files Godot creates next to scripts and shaders (`player_controller.gd.uid`).
+  If you rename or move a script, move its `.uid` file with it.
+- Anything that can take damage follows the `Health` + `take_damage()` contract in
+  [ARCHITECTURE.md](ARCHITECTURE.md#contracts-everyone-shares).
