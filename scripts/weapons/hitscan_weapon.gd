@@ -5,8 +5,6 @@ extends WeaponBase
 ## "MuzzleFlash" (a light shown briefly on fire).
 
 @export var max_range: float = 100.0
-## Random cone half-angle in degrees. 0 = perfectly accurate.
-@export var spread_degrees: float = 0.0
 @export var recoil_kick: float = 0.04
 
 var _impact_mesh: SphereMesh
@@ -30,8 +28,8 @@ func _ready() -> void:
 func _shoot() -> void:
 	var aim := get_aim_transform()
 	var direction := -aim.basis.z
-	if spread_degrees > 0.0:
-		var spread := deg_to_rad(spread_degrees)
+	var spread := deg_to_rad(get_spread_degrees())
+	if spread > 0.0:
 		direction = direction.rotated(aim.basis.x, randf_range(-spread, spread))
 		direction = direction.rotated(aim.basis.y, randf_range(-spread, spread))
 
@@ -44,7 +42,8 @@ func _shoot() -> void:
 	if hit.is_empty():
 		return
 	if hit.collider.has_method("take_damage"):
-		hit.collider.take_damage(damage, wielder)
+		var killed: bool = hit.collider.take_damage(damage, wielder)
+		hit_landed.emit(false, killed)
 	_spawn_impact(hit.position)
 
 

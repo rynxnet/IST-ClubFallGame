@@ -22,6 +22,9 @@ signal died
 
 var weapons: Array[WeaponBase] = []
 var current_weapon: WeaponBase
+## Read by the HUD (hides the crosshair while aiming).
+var is_aiming: bool = false
+var is_crouching: bool = false
 var _weapon_index: int = 0
 
 @onready var head: Node3D = $Head
@@ -76,8 +79,8 @@ func _physics_process(delta: float) -> void:
 			current_weapon.try_fire()
 
 
-func take_damage(amount: float, source: Node = null) -> void:
-	health.take_damage(amount, source)
+func take_damage(amount: float, source: Node = null) -> bool:
+	return health.take_damage(amount, source)
 
 
 func _equip(index: int) -> void:

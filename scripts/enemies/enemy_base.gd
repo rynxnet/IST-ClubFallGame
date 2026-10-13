@@ -66,8 +66,8 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
-func take_damage(amount: float, source: Node = null) -> void:
-	health.take_damage(amount, source)
+func take_damage(amount: float, source: Node = null) -> bool:
+	return health.take_damage(amount, source)
 
 
 ## Override in subclasses: hurt `attack_target` (melee hit, fire a weapon, ...).

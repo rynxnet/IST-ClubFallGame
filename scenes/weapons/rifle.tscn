@@ -24,7 +24,6 @@ size = Vector3(0.04, 0.11, 0.05)
 
 [node name="Rifle" type="Node3D"]
 script = ExtResource("1_script")
-spread_degrees = 0.6
 display_name = "Rifle"
 damage = 20.0
 fire_rate = 9.0
