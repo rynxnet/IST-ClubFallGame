@@ -1,0 +1,163 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://scripts/weapons/hitscan_weapon.gd" id="1_script"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_metal"]
+albedo_color = Color(0.11, 0.11, 0.115, 1)
+metallic = 0.6
+roughness = 0.45
+
+[sub_resource type="StandardMaterial3D" id="Mat_polymer"]
+albedo_color = Color(0.15, 0.145, 0.135, 1)
+roughness = 0.75
+
+[sub_resource type="StandardMaterial3D" id="Mat_flash"]
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(1, 0.72, 0.32, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_receiver"]
+material = SubResource("Mat_metal")
+size = Vector3(0.05, 0.085, 0.3)
+
+[sub_resource type="BoxMesh" id="Mesh_handguard"]
+material = SubResource("Mat_polymer")
+size = Vector3(0.056, 0.06, 0.28)
+
+[sub_resource type="CylinderMesh" id="Mesh_barrel"]
+material = SubResource("Mat_metal")
+top_radius = 0.011
+bottom_radius = 0.011
+height = 0.2
+radial_segments = 8
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_muzzle"]
+material = SubResource("Mat_metal")
+top_radius = 0.017
+bottom_radius = 0.017
+height = 0.06
+radial_segments = 8
+rings = 1
+
+[sub_resource type="BoxMesh" id="Mesh_stock"]
+material = SubResource("Mat_polymer")
+size = Vector3(0.045, 0.1, 0.27)
+
+[sub_resource type="BoxMesh" id="Mesh_buttpad"]
+material = SubResource("Mat_metal")
+size = Vector3(0.05, 0.125, 0.02)
+
+[sub_resource type="BoxMesh" id="Mesh_grip"]
+material = SubResource("Mat_polymer")
+size = Vector3(0.035, 0.11, 0.045)
+
+[sub_resource type="BoxMesh" id="Mesh_magazine"]
+material = SubResource("Mat_metal")
+size = Vector3(0.035, 0.17, 0.075)
+
+[sub_resource type="BoxMesh" id="Mesh_optic"]
+material = SubResource("Mat_metal")
+size = Vector3(0.035, 0.045, 0.11)
+
+[sub_resource type="CylinderMesh" id="Mesh_flash"]
+material = SubResource("Mat_flash")
+top_radius = 0.0
+bottom_radius = 0.05
+height = 0.18
+radial_segments = 8
+rings = 1
+
+[sub_resource type="SphereMesh" id="Mesh_flash_core"]
+material = SubResource("Mat_flash")
+radius = 0.04
+height = 0.08
+radial_segments = 8
+rings = 4
+
+[node name="EnemyRifle" type="Node3D"]
+script = ExtResource("1_script")
+max_range = 80.0
+recoil_kick = 0.02
+display_name = "Enemy Rifle"
+damage = 7.0
+fire_rate = 10.0
+magazine_size = 30
+reserve_ammo = 9999
+reload_time = 2.2
+hit_mask = 3
+hip_spread = 2.6
+aim_spread = 2.6
+move_spread = 0.0
+air_spread = 0.0
+bloom_per_shot = 0.3
+max_bloom = 1.2
+recoil_pitch = 0.0
+recoil_yaw = 0.0
+
+[node name="Model" type="Node3D" parent="."]
+
+[node name="Receiver" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -0.07)
+mesh = SubResource("Mesh_receiver")
+
+[node name="Handguard" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.025, -0.36)
+mesh = SubResource("Mesh_handguard")
+
+[node name="Barrel" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0.03, -0.6)
+cast_shadow = 0
+mesh = SubResource("Mesh_barrel")
+
+[node name="Muzzle" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0.03, -0.72)
+cast_shadow = 0
+mesh = SubResource("Mesh_muzzle")
+
+[node name="Stock" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.005, 0.215)
+mesh = SubResource("Mesh_stock")
+
+[node name="ButtPad" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, 0.355)
+cast_shadow = 0
+mesh = SubResource("Mesh_buttpad")
+
+[node name="PistolGrip" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 0.955336, 0.29552, 0, -0.29552, 0.955336, 0, -0.075, 0.035)
+cast_shadow = 0
+mesh = SubResource("Mesh_grip")
+
+[node name="Magazine" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 0.968912, -0.247404, 0, 0.247404, 0.968912, 0, -0.1, -0.12)
+mesh = SubResource("Mesh_magazine")
+
+[node name="Optic" type="MeshInstance3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.085, -0.06)
+cast_shadow = 0
+mesh = SubResource("Mesh_optic")
+
+[node name="GripR" type="Marker3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 0.03)
+
+[node name="GripL" type="Marker3D" parent="Model"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.015, -0.3)
+
+[node name="MuzzleFlash" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, -0.76)
+visible = false
+
+[node name="Light" type="OmniLight3D" parent="MuzzleFlash"]
+light_color = Color(1, 0.78, 0.45, 1)
+light_energy = 3.0
+omni_range = 3.5
+
+[node name="Flame" type="MeshInstance3D" parent="MuzzleFlash"]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, -0.08)
+cast_shadow = 0
+mesh = SubResource("Mesh_flash")
+
+[node name="Core" type="MeshInstance3D" parent="MuzzleFlash"]
+cast_shadow = 0
+mesh = SubResource("Mesh_flash_core")
