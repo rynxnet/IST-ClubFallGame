@@ -1,0 +1,840 @@
+[gd_scene load_steps=27 format=3]
+
+[ext_resource type="Script" path="res://scripts/maps/game_map.gd" id="map"]
+[ext_resource type="Script" path="res://scripts/maps/terrain.gd" id="terrain"]
+[ext_resource type="Script" path="res://scripts/maps/vegetation.gd" id="veg"]
+[ext_resource type="Material" path="res://resources/materials/forest_ground.tres" id="forest_ground"]
+[ext_resource type="Material" path="res://resources/materials/grass.tres" id="grass"]
+[ext_resource type="Material" path="res://resources/materials/foliage_conifer.tres" id="foliage_conifer"]
+[ext_resource type="Material" path="res://resources/materials/foliage_broadleaf.tres" id="foliage_broadleaf"]
+[ext_resource type="Material" path="res://resources/materials/foliage_bush.tres" id="foliage_bush"]
+[ext_resource type="Material" path="res://resources/materials/bark.tres" id="bark"]
+[ext_resource type="Material" path="res://resources/materials/rock.tres" id="rock"]
+[ext_resource type="Material" path="res://resources/materials/wood_planks.tres" id="wood_planks"]
+[ext_resource type="Material" path="res://resources/materials/sandbag.tres" id="sandbag"]
+[ext_resource type="Material" path="res://resources/materials/roof_metal.tres" id="roof_metal"]
+[ext_resource type="Material" path="res://resources/materials/canvas_olive.tres" id="canvas_olive"]
+[ext_resource type="Material" path="res://resources/materials/heli_paint.tres" id="heli_paint"]
+[ext_resource type="Material" path="res://resources/materials/scorch.tres" id="scorch"]
+[ext_resource type="Material" path="res://resources/materials/panel_orange.tres" id="panel_orange"]
+[ext_resource type="Material" path="res://resources/materials/wood_crate.tres" id="wood_crate"]
+[ext_resource type="Material" path="res://resources/materials/painted_metal_red.tres" id="painted_metal_red"]
+[ext_resource type="Material" path="res://resources/materials/painted_metal_green.tres" id="painted_metal_green"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
+sky_top_color = Color(0.28, 0.43, 0.66, 1)
+sky_horizon_color = Color(0.8, 0.72, 0.6, 1)
+sky_curve = 0.14
+ground_bottom_color = Color(0.1, 0.11, 0.08, 1)
+ground_horizon_color = Color(0.6, 0.58, 0.5, 1)
+sun_angle_max = 18.0
+sun_curve = 0.08
+
+[sub_resource type="Sky" id="Sky_main"]
+sky_material = SubResource("ProceduralSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_forest"]
+background_mode = 2
+sky = SubResource("Sky_main")
+ambient_light_source = 3
+ambient_light_color = Color(0.55, 0.58, 0.62, 1)
+ambient_light_sky_contribution = 0.75
+ambient_light_energy = 1.1
+tonemap_mode = 4
+tonemap_white = 6.0
+ssao_enabled = true
+ssao_radius = 1.4
+ssao_intensity = 1.8
+glow_enabled = true
+glow_intensity = 0.4
+glow_bloom = 0.04
+fog_enabled = true
+fog_light_color = Color(0.72, 0.72, 0.68, 1)
+fog_sun_scatter = 0.3
+fog_density = 0.0032
+fog_aerial_perspective = 0.5
+fog_sky_affect = 0.3
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_forest"]
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 1
+agent_radius = 0.5
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_x"]
+size = Vector3(2, 80, 166)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wall_z"]
+size = Vector3(166, 80, 2)
+
+[node name="Forest" type="Node3D"]
+script = ExtResource("map")
+bake_async = true
+nav_merge_cell_scale = 0.001
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_forest")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.6392, -0.28778, 0.71317, 0, 0.92735, 0.3742, -0.76904, -0.23919, 0.59276, 0, 40, 0)
+light_color = Color(1, 0.83, 0.64, 1)
+light_energy = 2.1
+shadow_enabled = true
+shadow_blur = 1.2
+directional_shadow_mode = 1
+directional_shadow_max_distance = 90.0
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_forest")
+
+[node name="Terrain" type="Node3D" parent="NavigationRegion3D"]
+script = ExtResource("terrain")
+flat_zones = Array[Vector4]([Vector4(12, 64, 6, -1), Vector4(54, -8, 5, 13.5), Vector4(-4, -46, 23, -1.2), Vector4(46, -54, 10, 3), Vector4(-52, -40, 8, 2.2), Vector4(-42, 22, 16, 2.6)])
+paths = Array[PackedVector2Array]([PackedVector2Array(12, 64, 18, 48, 30, 30, 40, 12, 48, -2, 53, -8), PackedVector2Array(30, 30, 16, 8, 4, -14, -4, -28, -4, -44), PackedVector2Array(-4, -44, 10, -46.5, 18, -50, 30, -57, 44, -54), PackedVector2Array(-4, -44, -16, -46, -24, -50, -40, -43, -52, -40), PackedVector2Array(-52, -40, -56, -20, -52, 0, -42, 22), PackedVector2Array(16, 8, -12, 12, -30, 18, -42, 22)])
+material = ExtResource("forest_ground")
+
+[node name="Vegetation" type="Node3D" parent="NavigationRegion3D"]
+script = ExtResource("veg")
+terrain_path = NodePath("../Terrain")
+bark_material = ExtResource("bark")
+conifer_material = ExtResource("foliage_conifer")
+broadleaf_material = ExtResource("foliage_broadleaf")
+bush_material = ExtResource("foliage_bush")
+grass_material = ExtResource("grass")
+rock_material = ExtResource("rock")
+exclusions = Array[Vector3]([Vector3(-4, -46, 21), Vector3(46, -54, 9), Vector3(-52, -40, 7), Vector3(-42, 22, 4), Vector3(54, -8, 4), Vector3(12, 64, 2.5)])
+sightlines = Array[Vector4]([Vector4(52, -10, -4, -46)])
+
+[node name="Outpost" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="CommandCabin" type="Node3D" parent="NavigationRegion3D/Outpost"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, -1.2, -52)
+
+[node name="Shell" type="CSGCombiner3D" parent="NavigationRegion3D/Outpost/CommandCabin"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+use_collision = true
+
+[node name="Walls" type="CSGBox3D" parent="NavigationRegion3D/Outpost/CommandCabin/Shell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+size = Vector3(6, 2.6, 4.6)
+material = ExtResource("wood_planks")
+
+[node name="Hollow" type="CSGBox3D" parent="NavigationRegion3D/Outpost/CommandCabin/Shell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+operation = 2
+size = Vector3(5.7, 3, 4.3)
+material = ExtResource("wood_planks")
+
+[node name="Door" type="CSGBox3D" parent="NavigationRegion3D/Outpost/CommandCabin/Shell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 1, 2.3)
+operation = 2
+size = Vector3(1.6, 2.2, 1)
+material = ExtResource("wood_planks")
+
+[node name="WindowBack" type="CSGBox3D" parent="NavigationRegion3D/Outpost/CommandCabin/Shell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 1.55, -2.3)
+operation = 2
+size = Vector3(1.2, 0.8, 1)
+material = ExtResource("wood_planks")
+
+[node name="WindowSide" type="CSGBox3D" parent="NavigationRegion3D/Outpost/CommandCabin/Shell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1.55, 0)
+operation = 2
+size = Vector3(1, 0.8, 1.2)
+material = ExtResource("wood_planks")
+
+[node name="Floor" type="CSGBox3D" parent="NavigationRegion3D/Outpost/CommandCabin"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.04, 0)
+size = Vector3(5.7, 0.1, 4.3)
+material = ExtResource("wood_planks")
+
+[node name="Roof" type="CSGPolygon3D" parent="NavigationRegion3D/Outpost/CommandCabin"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, 2.65)
+use_collision = true
+polygon = PackedVector2Array(-3.4, 0, 0, 1.3, 3.4, 0)
+depth = 5.3
+material = ExtResource("roof_metal")
+
+[node name="Table" type="CSGCombiner3D" parent="NavigationRegion3D/Outpost/CommandCabin"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0, -0.1)
+use_collision = true
+
+[node name="Top" type="CSGBox3D" parent="NavigationRegion3D/Outpost/CommandCabin/Table"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.76, 0)
+size = Vector3(0.8, 0.08, 1.6)
+material = ExtResource("wood_crate")
+
+[node name="Leg0" type="CSGBox3D" parent="NavigationRegion3D/Outpost/CommandCabin/Table"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.33, 0.36, -0.72)
+size = Vector3(0.07, 0.72, 0.07)
+material = ExtResource("wood_crate")
+
+[node name="Leg1" type="CSGBox3D" parent="NavigationRegion3D/Outpost/CommandCabin/Table"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.33, 0.36, -0.72)
+size = Vector3(0.07, 0.72, 0.07)
+material = ExtResource("wood_crate")
+
+[node name="Leg2" type="CSGBox3D" parent="NavigationRegion3D/Outpost/CommandCabin/Table"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.33, 0.36, 0.72)
+size = Vector3(0.07, 0.72, 0.07)
+material = ExtResource("wood_crate")
+
+[node name="Leg3" type="CSGBox3D" parent="NavigationRegion3D/Outpost/CommandCabin/Table"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.33, 0.36, 0.72)
+size = Vector3(0.07, 0.72, 0.07)
+material = ExtResource("wood_crate")
+
+[node name="Barracks" type="Node3D" parent="NavigationRegion3D/Outpost"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -1.2, -54)
+
+[node name="Shell" type="CSGCombiner3D" parent="NavigationRegion3D/Outpost/Barracks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+use_collision = true
+
+[node name="Walls" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Barracks/Shell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+size = Vector3(7, 2.6, 4.6)
+material = ExtResource("wood_planks")
+
+[node name="Hollow" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Barracks/Shell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+operation = 2
+size = Vector3(6.7, 3, 4.3)
+material = ExtResource("wood_planks")
+
+[node name="Door" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Barracks/Shell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1, 2.3)
+operation = 2
+size = Vector3(1.6, 2.2, 1)
+material = ExtResource("wood_planks")
+
+[node name="WindowBack" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Barracks/Shell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 1.55, -2.3)
+operation = 2
+size = Vector3(1.2, 0.8, 1)
+material = ExtResource("wood_planks")
+
+[node name="WindowSide" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Barracks/Shell"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 1.55, 0)
+operation = 2
+size = Vector3(1, 0.8, 1.2)
+material = ExtResource("wood_planks")
+
+[node name="Floor" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Barracks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.04, 0)
+size = Vector3(6.7, 0.1, 4.3)
+material = ExtResource("wood_planks")
+
+[node name="Roof" type="CSGPolygon3D" parent="NavigationRegion3D/Outpost/Barracks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.6, 2.65)
+use_collision = true
+polygon = PackedVector2Array(-3.9, 0, 0, 1.3, 3.9, 0)
+depth = 5.3
+material = ExtResource("roof_metal")
+
+[node name="Shelter" type="Node3D" parent="NavigationRegion3D/Outpost"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, -1.2, -38)
+
+[node name="Post0" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Shelter"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9, 1.35, -1.4)
+use_collision = true
+size = Vector3(0.15, 2.7, 0.15)
+material = ExtResource("wood_planks")
+
+[node name="Post1" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Shelter"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 1.35, -1.4)
+use_collision = true
+size = Vector3(0.15, 2.7, 0.15)
+material = ExtResource("wood_planks")
+
+[node name="Post2" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Shelter"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9, 1.2, 1.4)
+use_collision = true
+size = Vector3(0.15, 2.4, 0.15)
+material = ExtResource("wood_planks")
+
+[node name="Post3" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Shelter"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 1.2, 1.4)
+use_collision = true
+size = Vector3(0.15, 2.4, 0.15)
+material = ExtResource("wood_planks")
+
+[node name="Roof" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Shelter"]
+transform = Transform3D(1, 0, 0, 0, 0.99027, 0.13917, 0, -0.13917, 0.99027, 0, 2.55, 0)
+use_collision = true
+size = Vector3(4.5, 0.08, 3.5)
+material = ExtResource("canvas_olive")
+
+[node name="Crates" type="Node3D" parent="NavigationRegion3D/Outpost/Shelter"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Crate0" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Shelter/Crates"]
+transform = Transform3D(0.97815, 0, -0.20791, 0, 1, 0, 0.20791, 0, 0.97815, -1, 0.45, -0.6)
+use_collision = true
+size = Vector3(0.9, 0.9, 0.9)
+material = ExtResource("wood_crate")
+
+[node name="Crate1" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Shelter/Crates"]
+transform = Transform3D(0.99619, 0, 0.08716, 0, 1, 0, -0.08716, 0, 0.99619, 0, 0.45, -0.7)
+use_collision = true
+size = Vector3(0.9, 0.9, 0.9)
+material = ExtResource("wood_crate")
+
+[node name="Crate2" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Shelter/Crates"]
+transform = Transform3D(0.99863, 0, -0.05234, 0, 1, 0, 0.05234, 0, 0.99863, -0.5, 1.3, -0.6)
+use_collision = true
+size = Vector3(0.8, 0.8, 0.8)
+material = ExtResource("wood_crate")
+
+[node name="Crate3" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Shelter/Crates"]
+transform = Transform3D(0.98163, 0, -0.19081, 0, 1, 0, 0.19081, 0, 0.98163, 1, 0.35, 0.4)
+use_collision = true
+size = Vector3(0.7, 0.7, 0.7)
+material = ExtResource("wood_crate")
+
+[node name="Watchtower" type="CSGCombiner3D" parent="NavigationRegion3D/Outpost"]
+transform = Transform3D(0.99027, 0, 0.13917, 0, 1, 0, -0.13917, 0, 0.99027, 8, -1.2, -37)
+use_collision = true
+
+[node name="Leg0" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Watchtower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 2.9, -1.2)
+size = Vector3(0.22, 5.8, 0.22)
+material = ExtResource("wood_planks")
+
+[node name="Leg1" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Watchtower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 2.9, -1.2)
+size = Vector3(0.22, 5.8, 0.22)
+material = ExtResource("wood_planks")
+
+[node name="Leg2" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Watchtower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 2.9, 1.2)
+size = Vector3(0.22, 5.8, 0.22)
+material = ExtResource("wood_planks")
+
+[node name="Leg3" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Watchtower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 2.9, 1.2)
+size = Vector3(0.22, 5.8, 0.22)
+material = ExtResource("wood_planks")
+
+[node name="Platform" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Watchtower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 0)
+size = Vector3(3, 0.2, 3)
+material = ExtResource("wood_planks")
+
+[node name="Rail0" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Watchtower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.05, -1.45)
+size = Vector3(3, 0.9, 0.1)
+material = ExtResource("wood_planks")
+
+[node name="Rail1" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Watchtower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.05, 1.45)
+size = Vector3(3, 0.9, 0.1)
+material = ExtResource("wood_planks")
+
+[node name="Rail2" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Watchtower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.45, 5.05, 0)
+size = Vector3(0.1, 0.9, 3)
+material = ExtResource("wood_planks")
+
+[node name="Rail3" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Watchtower"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45, 5.05, 0)
+size = Vector3(0.1, 0.9, 3)
+material = ExtResource("wood_planks")
+
+[node name="BraceA" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Watchtower"]
+transform = Transform3D(0.83867, -0.54464, 0, 0.54464, 0.83867, 0, 0, 0, 1, 0, 2.2, 1.2)
+size = Vector3(0.12, 3.6, 0.12)
+material = ExtResource("wood_planks")
+
+[node name="BraceB" type="CSGBox3D" parent="NavigationRegion3D/Outpost/Watchtower"]
+transform = Transform3D(0.83867, 0.54464, 0, -0.54464, 0.83867, 0, 0, 0, 1, 0, 2.2, -1.2)
+size = Vector3(0.12, 3.6, 0.12)
+material = ExtResource("wood_planks")
+
+[node name="Roof" type="CSGCylinder3D" parent="NavigationRegion3D/Outpost"]
+transform = Transform3D(0.60182, 0, 0.79864, 0, 1, 0, -0.79864, 0, 0.60182, 8, 5.3, -37)
+use_collision = true
+radius = 2.4
+height = 1.2
+sides = 4
+cone = true
+material = ExtResource("roof_metal")
+
+[node name="Sandbags" type="Node3D" parent="NavigationRegion3D/Outpost"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="FrontWest" type="CSGPolygon3D" parent="NavigationRegion3D/Outpost/Sandbags"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -19, -1.2, -32)
+use_collision = true
+polygon = PackedVector2Array(-0.42, 0, -0.44, 0.18, -0.38, 0.36, -0.41, 0.55, -0.35, 0.74, -0.37, 0.92, -0.28, 1.1, 0.28, 1.1, 0.37, 0.92, 0.35, 0.74, 0.41, 0.55, 0.38, 0.36, 0.44, 0.18, 0.42, 0)
+depth = 10.5
+material = ExtResource("sandbag")
+
+[node name="FrontEast" type="CSGPolygon3D" parent="NavigationRegion3D/Outpost/Sandbags"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0.5, -1.2, -32)
+use_collision = true
+polygon = PackedVector2Array(-0.42, 0, -0.44, 0.18, -0.38, 0.36, -0.41, 0.55, -0.35, 0.74, -0.37, 0.92, -0.28, 1.1, 0.28, 1.1, 0.37, 0.92, 0.35, 0.74, 0.41, 0.55, 0.38, 0.36, 0.44, 0.18, 0.42, 0)
+depth = 10.5
+material = ExtResource("sandbag")
+
+[node name="WestNorth" type="CSGPolygon3D" parent="NavigationRegion3D/Outpost/Sandbags"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21, -1.2, -34)
+use_collision = true
+polygon = PackedVector2Array(-0.42, 0, -0.44, 0.18, -0.38, 0.36, -0.41, 0.55, -0.35, 0.74, -0.37, 0.92, -0.28, 1.1, 0.28, 1.1, 0.37, 0.92, 0.35, 0.74, 0.41, 0.55, 0.38, 0.36, 0.44, 0.18, 0.42, 0)
+depth = 13.5
+material = ExtResource("sandbag")
+
+[node name="WestSouth" type="CSGPolygon3D" parent="NavigationRegion3D/Outpost/Sandbags"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21, -1.2, -52.5)
+use_collision = true
+polygon = PackedVector2Array(-0.42, 0, -0.44, 0.18, -0.38, 0.36, -0.41, 0.55, -0.35, 0.74, -0.37, 0.92, -0.28, 1.1, 0.28, 1.1, 0.37, 0.92, 0.35, 0.74, 0.41, 0.55, 0.38, 0.36, 0.44, 0.18, 0.42, 0)
+depth = 7.5
+material = ExtResource("sandbag")
+
+[node name="EastNorth" type="CSGPolygon3D" parent="NavigationRegion3D/Outpost/Sandbags"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, -1.2, -34)
+use_collision = true
+polygon = PackedVector2Array(-0.42, 0, -0.44, 0.18, -0.38, 0.36, -0.41, 0.55, -0.35, 0.74, -0.37, 0.92, -0.28, 1.1, 0.28, 1.1, 0.37, 0.92, 0.35, 0.74, 0.41, 0.55, 0.38, 0.36, 0.44, 0.18, 0.42, 0)
+depth = 11.5
+material = ExtResource("sandbag")
+
+[node name="EastSouth" type="CSGPolygon3D" parent="NavigationRegion3D/Outpost/Sandbags"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, -1.2, -50.5)
+use_collision = true
+polygon = PackedVector2Array(-0.42, 0, -0.44, 0.18, -0.38, 0.36, -0.41, 0.55, -0.35, 0.74, -0.37, 0.92, -0.28, 1.1, 0.28, 1.1, 0.37, 0.92, 0.35, 0.74, 0.41, 0.55, 0.38, 0.36, 0.44, 0.18, 0.42, 0)
+depth = 7.5
+material = ExtResource("sandbag")
+
+[node name="GateBunker" type="CSGPolygon3D" parent="NavigationRegion3D/Outpost/Sandbags"]
+transform = Transform3D(0.35112, 0, 0.93633, 0, 1, 0, -0.93633, 0, 0.35112, -2, -1.2, -36)
+use_collision = true
+polygon = PackedVector2Array(-0.42, 0, -0.44, 0.18, -0.38, 0.36, -0.41, 0.55, -0.35, 0.74, -0.37, 0.92, -0.28, 1.1, 0.28, 1.1, 0.37, 0.92, 0.35, 0.74, 0.41, 0.55, 0.38, 0.36, 0.44, 0.18, 0.42, 0)
+depth = 4.272
+material = ExtResource("sandbag")
+
+[node name="TowerNest" type="CSGPolygon3D" parent="NavigationRegion3D/Outpost/Sandbags"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -1.2, -40)
+use_collision = true
+polygon = PackedVector2Array(-0.42, 0, -0.44, 0.18, -0.38, 0.36, -0.41, 0.55, -0.35, 0.74, -0.37, 0.92, -0.28, 1.1, 0.28, 1.1, 0.37, 0.92, 0.35, 0.74, 0.41, 0.55, 0.38, 0.36, 0.44, 0.18, 0.42, 0)
+depth = 3.5
+material = ExtResource("sandbag")
+
+[node name="CratesYard" type="Node3D" parent="NavigationRegion3D/Outpost"]
+transform = Transform3D(0.93969, 0, 0.34202, 0, 1, 0, -0.34202, 0, 0.93969, -2, -1.2, -55)
+
+[node name="Crate0" type="CSGBox3D" parent="NavigationRegion3D/Outpost/CratesYard"]
+transform = Transform3D(0.97815, 0, -0.20791, 0, 1, 0, 0.20791, 0, 0.97815, 0, 0.5, 0)
+use_collision = true
+size = Vector3(1, 1, 1)
+material = ExtResource("wood_crate")
+
+[node name="Crate1" type="CSGBox3D" parent="NavigationRegion3D/Outpost/CratesYard"]
+transform = Transform3D(0.99619, 0, 0.08716, 0, 1, 0, -0.08716, 0, 0.99619, 1.1, 0.5, 0.2)
+use_collision = true
+size = Vector3(1, 1, 1)
+material = ExtResource("wood_crate")
+
+[node name="Crate2" type="CSGBox3D" parent="NavigationRegion3D/Outpost/CratesYard"]
+transform = Transform3D(0.99863, 0, -0.05234, 0, 1, 0, 0.05234, 0, 0.99863, 0.5, 1.45, 0.1)
+use_collision = true
+size = Vector3(0.9, 0.9, 0.9)
+material = ExtResource("wood_crate")
+
+[node name="Crate3" type="CSGBox3D" parent="NavigationRegion3D/Outpost/CratesYard"]
+transform = Transform3D(0.98163, 0, -0.19081, 0, 1, 0, 0.19081, 0, 0.98163, -1.2, 0.4, 1.3)
+use_collision = true
+size = Vector3(0.8, 0.8, 0.8)
+material = ExtResource("wood_crate")
+
+[node name="Drums" type="Node3D" parent="NavigationRegion3D/Outpost"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, -1.2, -42)
+
+[node name="Drum0" type="CSGCylinder3D" parent="NavigationRegion3D/Outpost/Drums"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.44, 0)
+use_collision = true
+radius = 0.29
+height = 0.88
+sides = 12
+material = ExtResource("painted_metal_red")
+
+[node name="Drum1" type="CSGCylinder3D" parent="NavigationRegion3D/Outpost/Drums"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.65, 0.44, 0.2)
+use_collision = true
+radius = 0.29
+height = 0.88
+sides = 12
+material = ExtResource("painted_metal_red")
+
+[node name="Drum2" type="CSGCylinder3D" parent="NavigationRegion3D/Outpost/Drums"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.44, 0.7)
+use_collision = true
+radius = 0.29
+height = 0.88
+sides = 12
+material = ExtResource("painted_metal_red")
+
+[node name="CrashSite" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.81915, 0, 0.57358, 0, 1, 0, -0.57358, 0, 0.81915, 46, 3, -54)
+
+[node name="Helicopter" type="CSGCombiner3D" parent="NavigationRegion3D/CrashSite"]
+transform = Transform3D(0.9703, -0.24192, 0, 0.24133, 0.96793, -0.06976, 0.01688, 0.06768, 0.99756, 0, 0, 0)
+use_collision = true
+
+[node name="Cabin" type="CSGBox3D" parent="NavigationRegion3D/CrashSite/Helicopter"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+size = Vector3(2.2, 1.9, 4.4)
+material = ExtResource("heli_paint")
+
+[node name="CabinHollow" type="CSGBox3D" parent="NavigationRegion3D/CrashSite/Helicopter"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, 0.2)
+operation = 2
+size = Vector3(1.9, 1.6, 3.4)
+material = ExtResource("heli_paint")
+
+[node name="DoorLeft" type="CSGBox3D" parent="NavigationRegion3D/CrashSite/Helicopter"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 0.95, 0.4)
+operation = 2
+size = Vector3(0.6, 1.4, 1.8)
+material = ExtResource("heli_paint")
+
+[node name="Nose" type="CSGSphere3D" parent="NavigationRegion3D/CrashSite/Helicopter"]
+transform = Transform3D(1, 0, 0, 0, 0.85, 0, 0, 0, 1, 0, 0.95, -2.2)
+radius = 1.1
+radial_segments = 12
+rings = 8
+material = ExtResource("heli_paint")
+
+[node name="Boom" type="CSGBox3D" parent="NavigationRegion3D/CrashSite/Helicopter"]
+transform = Transform3D(1, 0, 0, 0, 0.99452, -0.10453, 0, 0.10453, 0.99452, 0, 1.55, 4.6)
+size = Vector3(0.55, 0.55, 5)
+material = ExtResource("heli_paint")
+
+[node name="Fin" type="CSGBox3D" parent="NavigationRegion3D/CrashSite/Helicopter"]
+transform = Transform3D(1, 0, 0, 0, 0.93969, 0.34202, 0, -0.34202, 0.93969, 0, 2.2, 6.9)
+size = Vector3(0.12, 1.5, 1)
+material = ExtResource("heli_paint")
+
+[node name="Mast" type="CSGCylinder3D" parent="NavigationRegion3D/CrashSite/Helicopter"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, -0.2)
+radius = 0.14
+height = 0.7
+sides = 8
+material = ExtResource("heli_paint")
+
+[node name="SkidL" type="CSGCylinder3D" parent="NavigationRegion3D/CrashSite/Helicopter"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, -1.05, 0.06, 0)
+radius = 0.06
+height = 4.2
+sides = 6
+material = ExtResource("heli_paint")
+
+[node name="SkidR" type="CSGCylinder3D" parent="NavigationRegion3D/CrashSite/Helicopter"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 1.05, 0.06, 0)
+radius = 0.06
+height = 4.2
+sides = 6
+material = ExtResource("heli_paint")
+
+[node name="BladeOnHull" type="CSGBox3D" parent="NavigationRegion3D/CrashSite"]
+transform = Transform3D(0.4924, -0.08682, 0.86603, 0.17365, 0.98481, 0, -0.85287, 0.15038, 0.5, 0.4, 2.55, -0.6)
+use_collision = true
+size = Vector3(0.35, 0.05, 5.5)
+material = ExtResource("heli_paint")
+
+[node name="BladeGround1" type="CSGBox3D" parent="NavigationRegion3D/CrashSite"]
+transform = Transform3D(0.25882, 0.05055, 0.9646, 0, 0.99863, -0.05234, -0.96593, 0.01355, 0.25846, 4.5, 0.12, 3)
+use_collision = true
+size = Vector3(0.35, 0.05, 5)
+material = ExtResource("heli_paint")
+
+[node name="BladeGround2" type="CSGBox3D" parent="NavigationRegion3D/CrashSite"]
+transform = Transform3D(0.93454, -0.09822, -0.34202, 0.10453, 0.99452, 0, 0.34015, -0.03575, 0.93969, -4, 0.15, -2.5)
+use_collision = true
+size = Vector3(0.35, 0.05, 4)
+material = ExtResource("heli_paint")
+
+[node name="Scorch" type="CSGCylinder3D" parent="NavigationRegion3D/CrashSite"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0.5)
+radius = 4.8
+height = 0.02
+sides = 14
+material = ExtResource("scorch")
+
+[node name="SupplyCrates" type="Node3D" parent="NavigationRegion3D/CrashSite"]
+transform = Transform3D(0.81915, 0, -0.57358, 0, 1, 0, 0.57358, 0, 0.81915, -5.5, 0, 2.5)
+
+[node name="Crate0" type="CSGBox3D" parent="NavigationRegion3D/CrashSite/SupplyCrates"]
+transform = Transform3D(0.97815, 0, -0.20791, 0, 1, 0, 0.20791, 0, 0.97815, 0, 0.5, 0)
+use_collision = true
+size = Vector3(1, 1, 1)
+material = ExtResource("wood_crate")
+
+[node name="Crate1" type="CSGBox3D" parent="NavigationRegion3D/CrashSite/SupplyCrates"]
+transform = Transform3D(0.99619, 0, 0.08716, 0, 1, 0, -0.08716, 0, 0.99619, 1.05, 0.5, 0)
+use_collision = true
+size = Vector3(1, 1, 1)
+material = ExtResource("wood_crate")
+
+[node name="Crate2" type="CSGBox3D" parent="NavigationRegion3D/CrashSite/SupplyCrates"]
+transform = Transform3D(0.99863, 0, -0.05234, 0, 1, 0, 0.05234, 0, 0.99863, 0.5, 1.45, 0)
+use_collision = true
+size = Vector3(0.9, 0.9, 0.9)
+material = ExtResource("wood_crate")
+
+[node name="SupplyDump" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(0.96593, 0, -0.25882, 0, 1, 0, 0.25882, 0, 0.96593, -52, 2.2, -40)
+
+[node name="Pole0" type="CSGBox3D" parent="NavigationRegion3D/SupplyDump"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 1.1, -1.8)
+use_collision = true
+size = Vector3(0.1, 2.2, 0.1)
+material = ExtResource("wood_planks")
+
+[node name="Pole1" type="CSGBox3D" parent="NavigationRegion3D/SupplyDump"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 1.1, -1.8)
+use_collision = true
+size = Vector3(0.1, 2.2, 0.1)
+material = ExtResource("wood_planks")
+
+[node name="Pole2" type="CSGBox3D" parent="NavigationRegion3D/SupplyDump"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.2, 1.1, 1.8)
+use_collision = true
+size = Vector3(0.1, 2.2, 0.1)
+material = ExtResource("wood_planks")
+
+[node name="Pole3" type="CSGBox3D" parent="NavigationRegion3D/SupplyDump"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2, 1.1, 1.8)
+use_collision = true
+size = Vector3(0.1, 2.2, 0.1)
+material = ExtResource("wood_planks")
+
+[node name="Tarp" type="CSGBox3D" parent="NavigationRegion3D/SupplyDump"]
+transform = Transform3D(1, 0, 0, 0, 0.99619, -0.08716, 0, 0.08716, 0.99619, 0, 2.2, 0)
+size = Vector3(5, 0.04, 4.2)
+material = ExtResource("canvas_olive")
+
+[node name="Crates" type="Node3D" parent="NavigationRegion3D/SupplyDump"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -0.6)
+
+[node name="Crate0" type="CSGBox3D" parent="NavigationRegion3D/SupplyDump/Crates"]
+transform = Transform3D(0.97815, 0, -0.20791, 0, 1, 0, 0.20791, 0, 0.97815, 0, 0.5, 0)
+use_collision = true
+size = Vector3(1, 1, 1)
+material = ExtResource("wood_crate")
+
+[node name="Crate1" type="CSGBox3D" parent="NavigationRegion3D/SupplyDump/Crates"]
+transform = Transform3D(0.99619, 0, 0.08716, 0, 1, 0, -0.08716, 0, 0.99619, 1.05, 0.5, 0)
+use_collision = true
+size = Vector3(1, 1, 1)
+material = ExtResource("wood_crate")
+
+[node name="Crate2" type="CSGBox3D" parent="NavigationRegion3D/SupplyDump/Crates"]
+transform = Transform3D(0.99863, 0, -0.05234, 0, 1, 0, 0.05234, 0, 0.99863, 0.5, 1.45, 0)
+use_collision = true
+size = Vector3(0.9, 0.9, 0.9)
+material = ExtResource("wood_crate")
+
+[node name="Crate3" type="CSGBox3D" parent="NavigationRegion3D/SupplyDump/Crates"]
+transform = Transform3D(0.98163, 0, -0.19081, 0, 1, 0, 0.19081, 0, 0.98163, -0.2, 0.4, 1.2)
+use_collision = true
+size = Vector3(0.8, 0.8, 0.8)
+material = ExtResource("wood_crate")
+
+[node name="Drum0" type="CSGCylinder3D" parent="NavigationRegion3D/SupplyDump"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 0.44, 1)
+use_collision = true
+radius = 0.29
+height = 0.88
+sides = 12
+material = ExtResource("painted_metal_green")
+
+[node name="Drum1" type="CSGCylinder3D" parent="NavigationRegion3D/SupplyDump"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 0.44, 0.35)
+use_collision = true
+radius = 0.29
+height = 0.88
+sides = 12
+material = ExtResource("painted_metal_green")
+
+[node name="LandingZone" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 2.6, 22)
+
+[node name="PanelA" type="CSGBox3D" parent="NavigationRegion3D/LandingZone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -3.5)
+size = Vector3(1.8, 0.03, 0.6)
+material = ExtResource("panel_orange")
+
+[node name="PanelB" type="CSGBox3D" parent="NavigationRegion3D/LandingZone"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0.02, 3.5)
+size = Vector3(1.8, 0.03, 0.6)
+material = ExtResource("panel_orange")
+
+[node name="Overlook" type="Node3D" parent="NavigationRegion3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 13.5, -8)
+
+[node name="Rock0" type="CSGSphere3D" parent="NavigationRegion3D/Overlook"]
+transform = Transform3D(1.50351, 0, 0.41042, 0, 0.8, 0, -0.54723, 0, 1.12763, 3.5, 0.1, 2.5)
+use_collision = true
+radius = 1.1
+radial_segments = 8
+rings = 5
+material = ExtResource("rock")
+
+[node name="Rock1" type="CSGSphere3D" parent="NavigationRegion3D/Overlook"]
+transform = Transform3D(1.03923, 0, -0.5, 0, 0.7, 0, 0.6, 0, 0.86603, -1.5, 0.1, 4)
+use_collision = true
+radius = 1.1
+radial_segments = 8
+rings = 5
+material = ExtResource("rock")
+
+[node name="Rock2" type="CSGSphere3D" parent="NavigationRegion3D/Overlook"]
+transform = Transform3D(0.64279, 0, 0.68944, 0, 0.6, 0, -0.76604, 0, 0.57851, 4.2, 0.1, -1)
+use_collision = true
+radius = 1.1
+radial_segments = 8
+rings = 5
+material = ExtResource("rock")
+
+[node name="Boundary" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="North" type="CollisionShape3D" parent="Boundary"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, -82)
+shape = SubResource("BoxShape3D_wall_z")
+
+[node name="South" type="CollisionShape3D" parent="Boundary"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, 82)
+shape = SubResource("BoxShape3D_wall_z")
+
+[node name="West" type="CollisionShape3D" parent="Boundary"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -82, 20, 0)
+shape = SubResource("BoxShape3D_wall_x")
+
+[node name="East" type="CollisionShape3D" parent="Boundary"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82, 20, 0)
+shape = SubResource("BoxShape3D_wall_x")
+
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+transform = Transform3D(0.93606, 0, -0.35184, 0, 1, 0, 0.35184, 0, 0.93606, 12, -0.9, 64)
+
+[node name="EnemySpawns" type="Node3D" parent="."]
+
+[node name="Spawn1" type="Marker3D" parent="EnemySpawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -1.1, -28)
+
+[node name="Spawn2" type="Marker3D" parent="EnemySpawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 2.01, -56)
+
+[node name="Spawn3" type="Marker3D" parent="EnemySpawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38, 1.12, -43)
+
+[node name="Spawn4" type="Marker3D" parent="EnemySpawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, -0.85, -16)
+
+[node name="Spawn5" type="Marker3D" parent="EnemySpawns"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40, 8.85, 12)
+
+[node name="MissionPoints" type="Node3D" parent="."]
+
+[node name="RidgeOverlook" type="Marker3D" parent="MissionPoints"]
+transform = Transform3D(0.54464, 0, 0.83867, 0, 1, 0, -0.83867, 0, 0.54464, 52.5, 13.6, -9.5)
+
+[node name="IntelLaptop" type="Marker3D" parent="MissionPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.4, -0.4, -52.1)
+
+[node name="Cache1" type="Marker3D" parent="MissionPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.5, 3.1, -49.5)
+
+[node name="Cache2" type="Marker3D" parent="MissionPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48.5, 2.3, -37)
+
+[node name="LZ" type="Marker3D" parent="MissionPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, 2.7, 22)
+
+[node name="OutpostGuards" type="Node3D" parent="MissionPoints"]
+
+[node name="Guard1" type="Marker3D" parent="MissionPoints/OutpostGuards"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, -1.1, -36)
+
+[node name="Guard2" type="Marker3D" parent="MissionPoints/OutpostGuards"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, -1.1, -46)
+
+[node name="Guard3" type="Marker3D" parent="MissionPoints/OutpostGuards"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, -1.1, -47)
+
+[node name="Guard4" type="Marker3D" parent="MissionPoints/OutpostGuards"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, -1.1, -40.5)
+
+[node name="Guard5" type="Marker3D" parent="MissionPoints/OutpostGuards"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, -1.1, -57)
+
+[node name="Guard6" type="Marker3D" parent="MissionPoints/OutpostGuards"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -1.1, -60)
+
+[node name="PatrolRoutes" type="Node3D" parent="MissionPoints"]
+
+[node name="OutpostLoop" type="Node3D" parent="MissionPoints/PatrolRoutes"]
+
+[node name="Waypoint1" type="Marker3D" parent="MissionPoints/PatrolRoutes/OutpostLoop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26, -1.1, -40)
+
+[node name="Waypoint2" type="Marker3D" parent="MissionPoints/PatrolRoutes/OutpostLoop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -1.1, -24)
+
+[node name="Waypoint3" type="Marker3D" parent="MissionPoints/PatrolRoutes/OutpostLoop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, -1.1, -40)
+
+[node name="Waypoint4" type="Marker3D" parent="MissionPoints/PatrolRoutes/OutpostLoop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, -0.11, -66)
+
+[node name="Waypoint5" type="Marker3D" parent="MissionPoints/PatrolRoutes/OutpostLoop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, -0.98, -66)
+
+[node name="CrashTrail" type="Node3D" parent="MissionPoints/PatrolRoutes"]
+
+[node name="Waypoint1" type="Marker3D" parent="MissionPoints/PatrolRoutes/CrashTrail"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, -1.1, -49)
+
+[node name="Waypoint2" type="Marker3D" parent="MissionPoints/PatrolRoutes/CrashTrail"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 2.58, -57)
+
+[node name="Waypoint3" type="Marker3D" parent="MissionPoints/PatrolRoutes/CrashTrail"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38, 3.07, -46)
+
+[node name="Waypoint4" type="Marker3D" parent="MissionPoints/PatrolRoutes/CrashTrail"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, -0.62, -41)
+
+[node name="WestEdge" type="Node3D" parent="MissionPoints/PatrolRoutes"]
+
+[node name="Waypoint1" type="Marker3D" parent="MissionPoints/PatrolRoutes/WestEdge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 2.3, -34)
+
+[node name="Waypoint2" type="Marker3D" parent="MissionPoints/PatrolRoutes/WestEdge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56, 2.74, -18)
+
+[node name="Waypoint3" type="Marker3D" parent="MissionPoints/PatrolRoutes/WestEdge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -52, 4.19, 0)
+
+[node name="Waypoint4" type="Marker3D" parent="MissionPoints/PatrolRoutes/WestEdge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34, 2.47, 6)
+
+[node name="Reinforcements" type="Node3D" parent="MissionPoints"]
+
+[node name="Reinforcement1" type="Marker3D" parent="MissionPoints/Reinforcements"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1.66, 8)
+
+[node name="Reinforcement2" type="Marker3D" parent="MissionPoints/Reinforcements"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, -2.68, 50)
+
+[node name="Reinforcement3" type="Marker3D" parent="MissionPoints/Reinforcements"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 2.21, -28)
+
+[node name="Reinforcement4" type="Marker3D" parent="MissionPoints/Reinforcements"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68, 6.84, -14)
+
+[node name="Reinforcement5" type="Marker3D" parent="MissionPoints/Reinforcements"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, -0.96, -16)
+
+[node name="Reinforcement6" type="Marker3D" parent="MissionPoints/Reinforcements"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -60, 8.18, 62)
