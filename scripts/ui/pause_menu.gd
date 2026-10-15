@@ -4,12 +4,14 @@ extends Control
 
 signal resume_pressed
 signal restart_pressed
+signal main_menu_pressed
 signal quit_pressed
 
 
 func _ready() -> void:
 	%ResumeButton.pressed.connect(resume_pressed.emit)
 	%RestartButton.pressed.connect(restart_pressed.emit)
+	%MainMenuButton.pressed.connect(main_menu_pressed.emit)
 	%QuitButton.pressed.connect(quit_pressed.emit)
 
 
