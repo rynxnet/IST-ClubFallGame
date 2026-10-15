@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
 
@@ -30,6 +30,52 @@ corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
+
+[sub_resource type="FontVariation" id="FontVariation_spaced"]
+variation_embolden = 0.5
+spacing_glyph = 3
+
+[sub_resource type="LabelSettings" id="LabelSettings_obj_header"]
+font = SubResource("FontVariation_spaced")
+font_size = 15
+font_color = Color(0.93, 0.7, 0.26, 1)
+outline_size = 4
+outline_color = Color(0, 0, 0, 0.5)
+
+[sub_resource type="LabelSettings" id="LabelSettings_obj_text"]
+font_size = 21
+font_color = Color(0.93, 0.95, 0.9, 1)
+outline_size = 5
+outline_color = Color(0, 0, 0, 0.6)
+
+[sub_resource type="LabelSettings" id="LabelSettings_obj_small"]
+font_size = 16
+font_color = Color(0.72, 0.77, 0.68, 1)
+outline_size = 4
+outline_color = Color(0, 0, 0, 0.5)
+
+[sub_resource type="LabelSettings" id="LabelSettings_obj_banner"]
+font = SubResource("FontVariation_spaced")
+font_size = 38
+font_color = Color(0.93, 0.7, 0.26, 1)
+outline_size = 10
+outline_color = Color(0, 0, 0, 0.8)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_obj_panel"]
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+bg_color = Color(0.035, 0.045, 0.04, 0.6)
+border_width_left = 3
+border_color = Color(0.93, 0.7, 0.26, 0.95)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_obj_fill"]
+bg_color = Color(0.93, 0.7, 0.26, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [node name="Hud" type="Control"]
 layout_mode = 3
@@ -73,7 +119,19 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="WaypointMarker" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
 [node name="TopLeft" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
 layout_mode = 1
 offset_left = 24.0
 offset_top = 20.0
@@ -188,3 +246,91 @@ grow_vertical = 2
 label_settings = SubResource("LabelSettings_banner")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="ObjectiveBox" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 404.0
+offset_bottom = 104.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_obj_panel")
+
+[node name="VBox" type="VBoxContainer" parent="ObjectiveBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Header" type="HBoxContainer" parent="ObjectiveBox/VBox"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="ObjectiveBox/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "OBJECTIVE"
+label_settings = SubResource("LabelSettings_obj_header")
+
+[node name="ObjectiveDistance" type="Label" parent="ObjectiveBox/VBox/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+label_settings = SubResource("LabelSettings_obj_small")
+horizontal_alignment = 2
+
+[node name="ObjectiveLabel" type="Label" parent="ObjectiveBox/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(348, 0)
+layout_mode = 2
+label_settings = SubResource("LabelSettings_obj_text")
+autowrap_mode = 3
+
+[node name="ObjectiveProgress" type="VBoxContainer" parent="ObjectiveBox/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 3
+
+[node name="ProgressLabel" type="Label" parent="ObjectiveBox/VBox/ObjectiveProgress"]
+unique_name_in_owner = true
+layout_mode = 2
+label_settings = SubResource("LabelSettings_obj_small")
+
+[node name="ProgressBar" type="ProgressBar" parent="ObjectiveBox/VBox/ObjectiveProgress"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_obj_fill")
+max_value = 1.0
+step = 0.001
+show_percentage = false
+
+[node name="ObjectiveFlash" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchor_top = 0.18
+anchor_right = 1.0
+anchor_bottom = 0.18
+offset_top = -44.0
+offset_bottom = 44.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+alignment = 1
+
+[node name="FlashTitle" type="Label" parent="ObjectiveFlash"]
+layout_mode = 2
+text = "OBJECTIVE COMPLETE"
+label_settings = SubResource("LabelSettings_obj_banner")
+horizontal_alignment = 1
+
+[node name="FlashDetail" type="Label" parent="ObjectiveFlash"]
+unique_name_in_owner = true
+layout_mode = 2
+label_settings = SubResource("LabelSettings_small")
+horizontal_alignment = 1
