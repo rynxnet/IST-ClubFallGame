@@ -1,0 +1,124 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://scripts/missions/supply_cache.gd" id="1_cache"]
+[ext_resource type="Script" path="res://scripts/core/health.gd" id="2_health"]
+[ext_resource type="Material" path="res://resources/materials/wood_crate.tres" id="3_wood"]
+[ext_resource type="Material" path="res://resources/materials/painted_metal_green.tres" id="4_metal"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_scorched"]
+albedo_color = Color(0.22, 0.15, 0.09, 1)
+roughness = 1.0
+
+[sub_resource type="StandardMaterial3D" id="Mat_charred"]
+albedo_color = Color(0.07, 0.065, 0.06, 1)
+roughness = 1.0
+
+[sub_resource type="BoxShape3D" id="Shape_stack"]
+size = Vector3(2, 1.5, 1.2)
+
+[sub_resource type="BoxMesh" id="Mesh_crate"]
+size = Vector3(0.9, 0.75, 1.1)
+
+[sub_resource type="BoxMesh" id="Mesh_top"]
+size = Vector3(0.8, 0.65, 0.9)
+
+[sub_resource type="BoxMesh" id="Mesh_can"]
+size = Vector3(0.45, 0.3, 0.25)
+
+[sub_resource type="BoxMesh" id="Mesh_debris"]
+size = Vector3(1, 1, 1)
+
+[sub_resource type="Gradient" id="Gradient_blast"]
+offsets = PackedFloat32Array(0, 0.35, 1)
+colors = PackedColorArray(1, 0.85, 0.4, 1, 1, 0.4, 0.08, 1, 0.12, 0.1, 0.1, 0)
+
+[sub_resource type="StandardMaterial3D" id="Mat_blast"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+
+[sub_resource type="SphereMesh" id="Mesh_blast"]
+material = SubResource("Mat_blast")
+radius = 0.18
+height = 0.36
+radial_segments = 8
+rings = 4
+
+[node name="SupplyCache" type="StaticBody3D"]
+collision_mask = 0
+script = ExtResource("1_cache")
+scorched_material = SubResource("Mat_scorched")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_health")
+max_health = 160.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+shape = SubResource("Shape_stack")
+
+[node name="Intact" type="Node3D" parent="."]
+
+[node name="CrateA" type="MeshInstance3D" parent="Intact"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.48, 0.375, 0)
+mesh = SubResource("Mesh_crate")
+surface_material_override/0 = ExtResource("3_wood")
+
+[node name="CrateB" type="MeshInstance3D" parent="Intact"]
+transform = Transform3D(0.9968, 0, 0.0799, 0, 1, 0, -0.0799, 0, 0.9968, 0.48, 0.375, 0.02)
+mesh = SubResource("Mesh_crate")
+surface_material_override/0 = ExtResource("3_wood")
+
+[node name="TopCrate" type="MeshInstance3D" parent="Intact"]
+transform = Transform3D(0.9988, 0, -0.0489, 0, 1, 0, 0.0489, 0, 0.9988, 0.05, 1.075, 0)
+mesh = SubResource("Mesh_top")
+surface_material_override/0 = ExtResource("3_wood")
+
+[node name="AmmoCan" type="MeshInstance3D" parent="Intact"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.62, 0.9, 0.25)
+mesh = SubResource("Mesh_can")
+surface_material_override/0 = ExtResource("4_metal")
+
+[node name="Debris" type="Node3D" parent="."]
+visible = false
+
+[node name="Slab" type="MeshInstance3D" parent="Debris"]
+transform = Transform3D(1.5283, 0, 0.2955, 0, 0.18, 0, -0.4728, 0, 0.9553, 0, 0.09, 0)
+mesh = SubResource("Mesh_debris")
+surface_material_override/0 = SubResource("Mat_charred")
+
+[node name="Plank" type="MeshInstance3D" parent="Debris"]
+transform = Transform3D(0.6, 0, 0, 0, 0.3, 0, 0, 0, 0.5, -0.75, 0.15, 0.45)
+mesh = SubResource("Mesh_debris")
+surface_material_override/0 = SubResource("Mat_charred")
+
+[node name="Can" type="MeshInstance3D" parent="Debris"]
+transform = Transform3D(0.45, 0, 0, 0, 0.2, 0, 0, 0, 0.25, 0.7, 0.1, -0.45)
+mesh = SubResource("Mesh_debris")
+surface_material_override/0 = SubResource("Mat_charred")
+
+[node name="Blast" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+emitting = false
+amount = 40
+lifetime = 0.9
+one_shot = true
+explosiveness = 1.0
+mesh = SubResource("Mesh_blast")
+emission_shape = 1
+emission_sphere_radius = 0.6
+direction = Vector3(0, 1, 0)
+spread = 70.0
+gravity = Vector3(0, -6, 0)
+initial_velocity_min = 3.0
+initial_velocity_max = 8.0
+scale_amount_min = 0.6
+scale_amount_max = 2.0
+color_ramp = SubResource("Gradient_blast")
+
+[node name="Flash" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+visible = false
+light_color = Color(1, 0.6, 0.25, 1)
+light_energy = 0.0
+omni_range = 9.0

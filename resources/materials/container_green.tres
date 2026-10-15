@@ -1,0 +1,16 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
+
+[ext_resource type="Shader" path="res://resources/materials/container.gdshader" id="1_5y0hp"]
+[ext_resource type="Texture2D" path="res://resources/materials/noise_grey.tres" id="2_0tkqe"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_5y0hp")
+shader_parameter/paint_color = Color(0.17, 0.28, 0.17, 1)
+shader_parameter/rust_color = null
+shader_parameter/noise_tex = ExtResource("2_0tkqe")
+shader_parameter/rust_amount = 0.3
+shader_parameter/rib_pitch = null
+shader_parameter/rib_depth = null
+shader_parameter/half_height = null
+shader_parameter/rail_size = null

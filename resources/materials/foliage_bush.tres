@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://resources/materials/foliage.gdshader" id="1_shader"]
+
+[resource]
+shader = ExtResource("1_shader")
+shader_parameter/albedo = Color(0.14, 0.24, 0.08, 1)
+shader_parameter/albedo_variation = Color(0.22, 0.28, 0.09, 1)
+shader_parameter/sway_amount = 0.15

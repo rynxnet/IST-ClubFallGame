@@ -1,0 +1,43 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/missions/mission_director.gd" id="1_director"]
+[ext_resource type="Script" path="res://scripts/missions/reach_area_objective.gd" id="2_reach"]
+[ext_resource type="Script" path="res://scripts/missions/interact_hold_objective.gd" id="3_interact"]
+[ext_resource type="Script" path="res://scripts/missions/destroy_targets_objective.gd" id="4_destroy"]
+[ext_resource type="Script" path="res://scripts/missions/hold_area_objective.gd" id="5_hold"]
+[ext_resource type="PackedScene" path="res://scenes/missions/intel_laptop.tscn" id="6_laptop"]
+[ext_resource type="PackedScene" path="res://scenes/missions/supply_cache.tscn" id="7_cache"]
+
+[node name="Mission" type="Node"]
+script = ExtResource("1_director")
+
+[node name="Scout" type="Node" parent="."]
+script = ExtResource("2_reach")
+radius = 6.0
+text = "Scout the outpost from the ridge overlook"
+bonus = 250
+anchor = &"RidgeOverlook"
+
+[node name="Intel" type="Node" parent="."]
+script = ExtResource("3_interact")
+prop_scene = ExtResource("6_laptop")
+hold_time = 3.0
+interact_radius = 1.8
+text = "Download the intel from the outpost laptop"
+bonus = 500
+anchor = &"IntelLaptop"
+
+[node name="Sabotage" type="Node" parent="."]
+script = ExtResource("4_destroy")
+target_scene = ExtResource("7_cache")
+anchors = Array[StringName]([&"Cache1", &"Cache2"])
+text = "Destroy the supply caches"
+bonus = 500
+
+[node name="Extract" type="Node" parent="."]
+script = ExtResource("5_hold")
+radius = 10.0
+hold_time = 60.0
+text = "Hold the LZ until extraction"
+bonus = 1000
+anchor = &"LZ"

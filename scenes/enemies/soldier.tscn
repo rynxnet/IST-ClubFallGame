@@ -1,0 +1,396 @@
+[gd_scene load_steps=37 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/soldier.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/core/health.gd" id="2_health"]
+[ext_resource type="Script" path="res://scripts/enemies/humanoid_rig.gd" id="3_rig"]
+[ext_resource type="PackedScene" path="res://scenes/weapons/enemy_rifle.tscn" id="4_rifle"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
+radius = 0.32
+height = 1.45
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_head"]
+radius = 0.14
+
+[sub_resource type="StandardMaterial3D" id="Mat_top"]
+albedo_color = Color(0.3, 0.31, 0.21, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="Mat_pants"]
+albedo_color = Color(0.34, 0.33, 0.24, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="Mat_vest"]
+albedo_color = Color(0.25, 0.27, 0.18, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="Mat_pouch"]
+albedo_color = Color(0.21, 0.23, 0.15, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="Mat_boots"]
+albedo_color = Color(0.24, 0.18, 0.12, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="Mat_gloves"]
+albedo_color = Color(0.38, 0.32, 0.23, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="Mat_face"]
+albedo_color = Color(0.64, 0.48, 0.38, 1)
+roughness = 0.6
+
+[sub_resource type="StandardMaterial3D" id="Mat_helmet"]
+albedo_color = Color(0.27, 0.29, 0.2, 1)
+roughness = 0.65
+
+[sub_resource type="StandardMaterial3D" id="Mat_lens"]
+albedo_color = Color(0.04, 0.05, 0.06, 1)
+metallic = 0.6
+roughness = 0.12
+
+[sub_resource type="StandardMaterial3D" id="Mat_strap"]
+albedo_color = Color(0.12, 0.12, 0.11, 1)
+roughness = 0.8
+
+[sub_resource type="CapsuleMesh" id="Mesh_pelvis"]
+material = SubResource("Mat_pants")
+radius = 0.125
+height = 0.36
+radial_segments = 16
+rings = 4
+
+[sub_resource type="BoxMesh" id="Mesh_belt"]
+material = SubResource("Mat_pouch")
+size = Vector3(0.35, 0.06, 0.26)
+
+[sub_resource type="CapsuleMesh" id="Mesh_thigh"]
+material = SubResource("Mat_pants")
+radius = 0.085
+height = 0.5
+radial_segments = 16
+rings = 4
+
+[sub_resource type="CapsuleMesh" id="Mesh_shin"]
+material = SubResource("Mat_pants")
+radius = 0.068
+height = 0.46
+radial_segments = 16
+rings = 4
+
+[sub_resource type="BoxMesh" id="Mesh_kneepad"]
+material = SubResource("Mat_vest")
+size = Vector3(0.11, 0.12, 0.05)
+
+[sub_resource type="BoxMesh" id="Mesh_boot"]
+material = SubResource("Mat_boots")
+size = Vector3(0.11, 0.11, 0.28)
+
+[sub_resource type="CapsuleMesh" id="Mesh_torso"]
+material = SubResource("Mat_top")
+radius = 0.17
+height = 0.56
+radial_segments = 16
+rings = 4
+
+[sub_resource type="BoxMesh" id="Mesh_vest"]
+material = SubResource("Mat_vest")
+size = Vector3(0.37, 0.34, 0.3)
+
+[sub_resource type="BoxMesh" id="Mesh_vest_strap"]
+material = SubResource("Mat_vest")
+size = Vector3(0.07, 0.03, 0.31)
+
+[sub_resource type="BoxMesh" id="Mesh_pouch"]
+material = SubResource("Mat_pouch")
+size = Vector3(0.085, 0.11, 0.05)
+
+[sub_resource type="CylinderMesh" id="Mesh_neck"]
+material = SubResource("Mat_face")
+top_radius = 0.055
+bottom_radius = 0.055
+height = 0.12
+radial_segments = 16
+rings = 1
+
+[sub_resource type="SphereMesh" id="Mesh_head"]
+material = SubResource("Mat_face")
+radius = 0.1
+height = 0.235
+radial_segments = 20
+rings = 10
+
+[sub_resource type="SphereMesh" id="Mesh_helmet"]
+material = SubResource("Mat_helmet")
+radius = 0.128
+height = 0.14
+radial_segments = 20
+rings = 10
+is_hemisphere = true
+
+[sub_resource type="BoxMesh" id="Mesh_goggles"]
+material = SubResource("Mat_lens")
+size = Vector3(0.17, 0.055, 0.04)
+
+[sub_resource type="CylinderMesh" id="Mesh_goggle_strap"]
+material = SubResource("Mat_strap")
+top_radius = 0.104
+bottom_radius = 0.104
+height = 0.03
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CapsuleMesh" id="Mesh_upper_arm"]
+material = SubResource("Mat_top")
+radius = 0.058
+height = 0.34
+radial_segments = 16
+rings = 4
+
+[sub_resource type="CapsuleMesh" id="Mesh_forearm"]
+material = SubResource("Mat_top")
+radius = 0.05
+height = 0.3
+radial_segments = 16
+rings = 4
+
+[sub_resource type="SphereMesh" id="Mesh_hand"]
+material = SubResource("Mat_gloves")
+radius = 0.045
+height = 0.12
+radial_segments = 20
+rings = 10
+
+[sub_resource type="CylinderMesh" id="Mesh_ear_cup"]
+material = SubResource("Mat_strap")
+top_radius = 0.038
+bottom_radius = 0.038
+height = 0.035
+radial_segments = 16
+rings = 1
+
+[sub_resource type="BoxMesh" id="Mesh_pack"]
+material = SubResource("Mat_pouch")
+size = Vector3(0.26, 0.3, 0.09)
+
+[node name="Soldier" type="CharacterBody3D" node_paths=PackedStringArray("weapon", "aim_node")]
+collision_layer = 4
+collision_mask = 7
+script = ExtResource("1_script")
+move_speed = 3.4
+turn_speed = 8.0
+attack_range = 22.0
+score_value = 150
+weapon = NodePath("Rig/Body/Hips/RifleSocket/EnemyRifle")
+aim_node = NodePath("Aim")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.725, 0)
+shape = SubResource("CapsuleShape3D_body")
+
+[node name="Head" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62, 0)
+shape = SubResource("SphereShape3D_head")
+metadata/damage_multiplier = 2.5
+
+[node name="Rig" type="Node3D" parent="." node_paths=PackedStringArray("right_hand_target", "left_hand_target")]
+script = ExtResource("3_rig")
+right_hand_target = NodePath("Body/Hips/RifleSocket/EnemyRifle/Model/GripR")
+left_hand_target = NodePath("Body/Hips/RifleSocket/EnemyRifle/Model/GripL")
+
+[node name="Body" type="Node3D" parent="Rig"]
+
+[node name="Hips" type="Node3D" parent="Rig/Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
+
+[node name="Pelvis" type="MeshInstance3D" parent="Rig/Body/Hips"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 0.85, 0, -0.02, 0)
+mesh = SubResource("Mesh_pelvis")
+
+[node name="Belt" type="MeshInstance3D" parent="Rig/Body/Hips"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_belt")
+
+[node name="LegL" type="Node3D" parent="Rig/Body/Hips"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, -0.04, 0)
+
+[node name="Thigh" type="MeshInstance3D" parent="Rig/Body/Hips/LegL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.21, 0)
+mesh = SubResource("Mesh_thigh")
+
+[node name="KneeL" type="Node3D" parent="Rig/Body/Hips/LegL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.43, 0)
+
+[node name="Shin" type="MeshInstance3D" parent="Rig/Body/Hips/LegL/KneeL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+mesh = SubResource("Mesh_shin")
+
+[node name="KneePad" type="MeshInstance3D" parent="Rig/Body/Hips/LegL/KneeL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, -0.07)
+cast_shadow = 0
+mesh = SubResource("Mesh_kneepad")
+
+[node name="FootL" type="Node3D" parent="Rig/Body/Hips/LegL/KneeL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
+
+[node name="Boot" type="MeshInstance3D" parent="Rig/Body/Hips/LegL/KneeL/FootL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.025, -0.06)
+mesh = SubResource("Mesh_boot")
+
+[node name="LegR" type="Node3D" parent="Rig/Body/Hips"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, -0.04, 0)
+
+[node name="Thigh" type="MeshInstance3D" parent="Rig/Body/Hips/LegR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.21, 0)
+mesh = SubResource("Mesh_thigh")
+
+[node name="KneeR" type="Node3D" parent="Rig/Body/Hips/LegR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.43, 0)
+
+[node name="Shin" type="MeshInstance3D" parent="Rig/Body/Hips/LegR/KneeR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+mesh = SubResource("Mesh_shin")
+
+[node name="KneePad" type="MeshInstance3D" parent="Rig/Body/Hips/LegR/KneeR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, -0.07)
+cast_shadow = 0
+mesh = SubResource("Mesh_kneepad")
+
+[node name="FootR" type="Node3D" parent="Rig/Body/Hips/LegR/KneeR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
+
+[node name="Boot" type="MeshInstance3D" parent="Rig/Body/Hips/LegR/KneeR/FootR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.025, -0.06)
+mesh = SubResource("Mesh_boot")
+
+[node name="Spine" type="Node3D" parent="Rig/Body/Hips"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0)
+
+[node name="Torso" type="MeshInstance3D" parent="Rig/Body/Hips/Spine"]
+transform = Transform3D(1.15, 0, 0, 0, 1, 0, 0, 0, 0.75, 0, 0.2, 0)
+mesh = SubResource("Mesh_torso")
+
+[node name="Vest" type="MeshInstance3D" parent="Rig/Body/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+mesh = SubResource("Mesh_vest")
+
+[node name="VestStrapL" type="MeshInstance3D" parent="Rig/Body/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.11, 0.385, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_vest_strap")
+
+[node name="VestStrapR" type="MeshInstance3D" parent="Rig/Body/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.11, 0.385, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_vest_strap")
+
+[node name="Pouch1" type="MeshInstance3D" parent="Rig/Body/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 0.13, -0.17)
+cast_shadow = 0
+mesh = SubResource("Mesh_pouch")
+
+[node name="Pouch2" type="MeshInstance3D" parent="Rig/Body/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, -0.17)
+cast_shadow = 0
+mesh = SubResource("Mesh_pouch")
+
+[node name="Pouch3" type="MeshInstance3D" parent="Rig/Body/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.13, -0.17)
+cast_shadow = 0
+mesh = SubResource("Mesh_pouch")
+
+[node name="Pack" type="MeshInstance3D" parent="Rig/Body/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22, 0.19)
+mesh = SubResource("Mesh_pack")
+
+[node name="NeckMesh" type="MeshInstance3D" parent="Rig/Body/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.47, -0.005)
+cast_shadow = 0
+mesh = SubResource("Mesh_neck")
+
+[node name="Neck" type="Node3D" parent="Rig/Body/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.47, 0)
+
+[node name="HeadMesh" type="MeshInstance3D" parent="Rig/Body/Hips/Spine/Neck"]
+transform = Transform3D(0.86, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, -0.01)
+mesh = SubResource("Mesh_head")
+
+[node name="Helmet" type="MeshInstance3D" parent="Rig/Body/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 0.992809, -0.119712, 0, 0.119712, 0.992809, 0, 0.175, 0.008)
+mesh = SubResource("Mesh_helmet")
+
+[node name="GoggleStrap" type="MeshInstance3D" parent="Rig/Body/Hips/Spine/Neck"]
+transform = Transform3D(0.88, 0, 0, 0, 0.995004, -0.10183, 0, 0.099833, 1.014904, 0, 0.16, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_goggle_strap")
+
+[node name="Goggles" type="MeshInstance3D" parent="Rig/Body/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.16, -0.098)
+cast_shadow = 0
+mesh = SubResource("Mesh_goggles")
+
+[node name="EarCupL" type="MeshInstance3D" parent="Rig/Body/Hips/Spine/Neck"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, -0.088, 0.14, 0.005)
+cast_shadow = 0
+mesh = SubResource("Mesh_ear_cup")
+
+[node name="EarCupR" type="MeshInstance3D" parent="Rig/Body/Hips/Spine/Neck"]
+transform = Transform3D(0, -1, 0, 1, 0, 0, 0, 0, 1, 0.088, 0.14, 0.005)
+cast_shadow = 0
+mesh = SubResource("Mesh_ear_cup")
+
+[node name="ShoulderL" type="Node3D" parent="Rig/Body/Hips/Spine"]
+transform = Transform3D(0.996802, 0.079915, 0, -0.079915, 0.996802, 0, 0, 0, 1, -0.2, 0.39, 0)
+
+[node name="UpperArm" type="MeshInstance3D" parent="Rig/Body/Hips/Spine/ShoulderL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.135, 0)
+mesh = SubResource("Mesh_upper_arm")
+
+[node name="ElbowL" type="Node3D" parent="Rig/Body/Hips/Spine/ShoulderL"]
+transform = Transform3D(1, 0, 0, 0, 0.988771, -0.149438, 0, 0.149438, 0.988771, 0, -0.31, 0)
+
+[node name="Forearm" type="MeshInstance3D" parent="Rig/Body/Hips/Spine/ShoulderL/ElbowL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.13, 0)
+mesh = SubResource("Mesh_forearm")
+
+[node name="Hand" type="MeshInstance3D" parent="Rig/Body/Hips/Spine/ShoulderL/ElbowL"]
+transform = Transform3D(0.75, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_hand")
+
+[node name="ShoulderR" type="Node3D" parent="Rig/Body/Hips/Spine"]
+transform = Transform3D(0.996802, -0.079915, 0, 0.079915, 0.996802, 0, 0, 0, 1, 0.2, 0.39, 0)
+
+[node name="UpperArm" type="MeshInstance3D" parent="Rig/Body/Hips/Spine/ShoulderR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.135, 0)
+mesh = SubResource("Mesh_upper_arm")
+
+[node name="ElbowR" type="Node3D" parent="Rig/Body/Hips/Spine/ShoulderR"]
+transform = Transform3D(1, 0, 0, 0, 0.988771, -0.149438, 0, 0.149438, 0.988771, 0, -0.31, 0)
+
+[node name="Forearm" type="MeshInstance3D" parent="Rig/Body/Hips/Spine/ShoulderR/ElbowR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.13, 0)
+mesh = SubResource("Mesh_forearm")
+
+[node name="Hand" type="MeshInstance3D" parent="Rig/Body/Hips/Spine/ShoulderR/ElbowR"]
+transform = Transform3D(0.75, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_hand")
+
+[node name="RifleSocket" type="Node3D" parent="Rig/Body/Hips"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, 0.45, -0.3)
+
+[node name="EnemyRifle" parent="Rig/Body/Hips/RifleSocket" instance=ExtResource("4_rifle")]
+
+[node name="Aim" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, 1.45, 0)
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_health")
+max_health = 60.0
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 1.0
+target_desired_distance = 1.2
+radius = 0.4
