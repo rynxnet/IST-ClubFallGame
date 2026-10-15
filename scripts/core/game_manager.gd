@@ -17,9 +17,23 @@ signal score_changed(score: int)
 signal wave_started(wave: int, total_waves: int)
 signal enemies_remaining_changed(count: int)
 signal pause_changed(paused: bool)
+## Mission mode only. `waypoint` is where the HUD points (null = no marker).
+signal objective_changed(text: String, waypoint: Node3D)
+## Mission mode only. 0..1 for hold/timer objectives; a negative value hides the bar.
+signal objective_progress(fraction: float, label: String)
+signal objective_completed(text: String, bonus: int)
+## Mission success. Keys: time, kills, headshots, shots_fired, shots_hit, accuracy (0..1),
+## damage_taken, score, stars (1-3), best_time, best_stars, new_best (bool).
+## Mission failure (player died) still emits match_ended(false).
+signal mission_completed(stats: Dictionary)
+signal main_menu_requested
 
-enum MatchState { NONE, PLAYING, WON, LOST }
+enum MatchState { NONE, MENU, PLAYING, WON, LOST }
 
+const MAPS := {
+	&"arena": "res://scenes/maps/arena.tscn",
+	&"forest": "res://scenes/maps/forest.tscn",
+}
 const PLAYER_SCENE := preload("res://scenes/player/player.tscn")
 const GRUNT_SCENE := preload("res://scenes/enemies/grunt.tscn")
 const SOLDIER_SCENE := preload("res://scenes/enemies/soldier.tscn")
@@ -34,6 +48,9 @@ var wave: int = 0
 var enemies_remaining: int = 0
 var map: GameMap
 var player: PlayerController
+## &"waves" (arena survival) or &"mission" (map has a MissionDirector).
+var mode: StringName = &"waves"
+var current_map_id: StringName = &""
 
 var _spawn_queue: Array[PackedScene] = []
 var _spawn_index: int = 0
@@ -187,3 +204,19 @@ func _make_timer(on_timeout: Callable) -> Timer:
 func _stop_timers() -> void:
 	_wave_timer.stop()
 	_spawn_timer.stop()
+
+
+## Loads a map from MAPS into the run scene and starts it. (Contract stub.)
+func load_map(map_id: StringName) -> void:
+	current_map_id = map_id
+
+
+## Leaves the match and shows the main menu. (Contract stub.)
+func return_to_menu() -> void:
+	current_map_id = &""
+	main_menu_requested.emit()
+
+
+## Saved records for a map: {"best_time": float, "best_stars": int}, or {} if none. (Contract stub.)
+func get_best(_map_id: StringName) -> Dictionary:
+	return {}
