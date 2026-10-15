@@ -1,7 +1,8 @@
 extends Node
-## Run scene. Hands the current map to GameManager, which starts the match.
-## When the map loader exists (ARCHITECTURE.md #17), GameManager will pick the map instead.
+## Run scene. Starts empty: GameManager either shows the main menu (no map chosen yet) or
+## instances the chosen map as the `Map` child and starts the match. Loading a map, restarting
+## and returning to the menu all reload this scene.
 
 
 func _ready() -> void:
-	GameManager.start_match($Map)
+	GameManager.begin_run(self)
