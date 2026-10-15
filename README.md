@@ -49,6 +49,7 @@ git lfs pull               # fetch the real binary assets
 | Jump / Sprint       | Space / Shift           |
 | Crouch              | Ctrl or C (hold)        |
 | Aim down sights     | Right mouse (hold)      |
+| Interact            | F (hold)                |
 | Fire                | Left mouse (hold)       |
 | Reload              | R (also automatic when empty) |
 | Switch weapon       | Mouse wheel, Q / E      |
@@ -56,6 +57,17 @@ git lfs pull               # fetch the real binary assets
 | Recapture the mouse | Click in the game window |
 
 Change bindings in **Project > Project Settings > Input Map**.
+
+## Game modes
+
+The game opens on a main menu with two levels:
+
+- **Arena — Survival**: the concrete container yard. Survive 5 waves of rushers and riflemen.
+- **Forest — Recon & Extract**: a 160 m forest valley with a mission: scout the outpost from the
+  ridge, hold F at the laptop to download intel, destroy two supply caches, then hold the landing
+  zone for 60 s while reinforcements close in. Patrols don't know you're there until they see you
+  or hear your shots. Finishing shows time, kills, headshots, accuracy, and a 1–3 star rating;
+  best results are saved and shown on the menu.
 
 ## Folder map
 

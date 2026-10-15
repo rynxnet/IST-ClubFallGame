@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/game_map.gd" id="map"]
 [ext_resource type="Script" path="res://scripts/maps/terrain.gd" id="terrain"]
@@ -20,6 +20,7 @@
 [ext_resource type="Material" path="res://resources/materials/wood_crate.tres" id="wood_crate"]
 [ext_resource type="Material" path="res://resources/materials/painted_metal_red.tres" id="painted_metal_red"]
 [ext_resource type="Material" path="res://resources/materials/painted_metal_green.tres" id="painted_metal_green"]
+[ext_resource type="PackedScene" path="res://scenes/missions/recon_extract.tscn" id="mission"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 sky_top_color = Color(0.28, 0.43, 0.66, 1)
@@ -838,3 +839,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, -0.96, -16)
 
 [node name="Reinforcement6" type="Marker3D" parent="MissionPoints/Reinforcements"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -60, 8.18, 62)
+
+[node name="Mission" parent="." instance=ExtResource("mission")]

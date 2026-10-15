@@ -43,10 +43,21 @@ flowchart LR
 - **GameManager owns the match**: spawning the player and enemies, waves, score, win/lose,
   pause, and mouse capture.
 
-**Scene flow:** `scenes/main.tscn` is the run scene. It instances `scenes/maps/arena.tscn` as
-its `Map` child, and `scripts/main.gd` hands that map to `GameManager.start_match()`.
-GameManager spawns the player at the map's `PlayerSpawn`, then runs waves of enemies from its
-`EnemySpawns`. Restart reloads the scene and the same thing happens again.
+**Scene flow:** `scenes/main.tscn` is the run scene and starts empty. `GameManager.begin_run()`
+either shows the main menu or instances the chosen map from `GameManager.MAPS` as `Main/Map` and
+starts the match. `load_map()`, `restart()` and `return_to_menu()` all reload the run scene;
+GameManager (an autoload) remembers which map is chosen.
+
+**Two modes:** a map with a child `Mission` (a `MissionDirector`, e.g.
+`scenes/missions/recon_extract.tscn`) runs as a mission; any other map runs arena waves. The
+director runs its objective children in order (reach area, hold-to-interact, destroy targets,
+hold area), finds its anchors by name under the map's `MissionPoints`, spawns unaware guards and
+patrols, and relays progress through GameManager's `objective_*` and `mission_completed` signals,
+which the HUD and results screen listen to. Stars and best times are saved in `user://records.cfg`.
+
+**Big outdoor maps** add navmesh geometry from any node in group `"nav_source"` that implements
+`add_nav_geometry(source)` (the forest terrain and tree trunks do), and can bake asynchronously
+(`bake_async`).
 
 **Shared setup** (`project.godot`):
 
@@ -89,6 +100,9 @@ Scroll wheel / Q / E already cycle between weapons.
 see `soldier.gd`). Build the scene like `scenes/enemies/grunt.tscn` (CharacterBody3D on layer 3
 with `Health`, `NavigationAgent3D`, body + `Head` hitboxes, and a `HumanoidRig`). Add it to
 `_build_wave()` in `game_manager.gd` so waves can spawn it.
+
+**A new mission:** add objective nodes (see `scripts/missions/`) under a MissionDirector and
+place the anchors it needs under the map's `MissionPoints`.
 
 **A new map:** make a scene in `scenes/maps/` whose root uses `scripts/maps/game_map.gd` and
 contains `PlayerSpawn` (Marker3D), `EnemySpawns` (Node3D with Marker3D children), and a
@@ -139,7 +153,7 @@ what needs to exist first. ✅ means a starter version exists; it's still fair g
 20. ✅ **Match flow**: start, win (survive `waves_to_win`), lose, restart.
 21. ✅ **Waves**: `1 + 2 × wave` enemies; from wave 2, `wave - 1` of them are Soldiers.
 22. ⬜ **Wave design**: mix enemy types per wave, bosses, tuning. *Depends on: 18*
-23. ⬜ **Map loading**: GameManager picks and swaps maps into `main.tscn`. *Depends on: a second map*
+23. ✅ **Map loading**: main menu → `GameManager.load_map()`; add a map by listing it in `MAPS`.
 24. ⬜ **High score** saved to `user://`.
 
 ### UI (`scenes/ui/`, `scripts/ui/`)
@@ -147,7 +161,7 @@ what needs to exist first. ✅ means a starter version exists; it's still fair g
 25. ✅ **HUD**: health, ammo, reload, crosshair, score, wave, enemies left, wave banner.
 26. ✅ **Pause menu**: resume, restart, quit.
 27. ✅ **Game over / victory screen**.
-28. ⬜ **Main menu**: play, settings, quit. *No dependencies*
+28. ✅ **Main menu**: both modes with best stars/time. ⬜ Settings screen still open.
 29. ⬜ **Settings**: mouse sensitivity, volume, graphics. *Depends on: 28*
 
 ### Art & audio (`assets/`, always via Git LFS)
