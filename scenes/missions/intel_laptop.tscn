@@ -1,0 +1,71 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/missions/intel_laptop.gd" id="1_laptop"]
+[ext_resource type="Material" path="res://resources/materials/wood_crate.tres" id="2_wood"]
+[ext_resource type="Material" path="res://resources/materials/painted_metal_green.tres" id="3_metal"]
+
+[sub_resource type="BoxShape3D" id="Shape_crate"]
+size = Vector3(0.9, 0.8, 0.7)
+
+[sub_resource type="BoxMesh" id="Mesh_crate"]
+size = Vector3(0.9, 0.8, 0.7)
+
+[sub_resource type="StandardMaterial3D" id="Mat_plastic"]
+albedo_color = Color(0.09, 0.09, 0.1, 1)
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="Mesh_base"]
+material = SubResource("Mat_plastic")
+size = Vector3(0.36, 0.025, 0.25)
+
+[sub_resource type="BoxMesh" id="Mesh_lid"]
+material = SubResource("Mat_plastic")
+size = Vector3(0.36, 0.24, 0.012)
+
+[sub_resource type="BoxMesh" id="Mesh_display"]
+size = Vector3(0.32, 0.2, 0.002)
+
+[sub_resource type="BoxMesh" id="Mesh_radio"]
+size = Vector3(0.18, 0.24, 0.12)
+
+[node name="IntelLaptop" type="StaticBody3D"]
+collision_mask = 0
+script = ExtResource("1_laptop")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+shape = SubResource("Shape_crate")
+
+[node name="Crate" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+mesh = SubResource("Mesh_crate")
+surface_material_override/0 = ExtResource("2_wood")
+
+[node name="Radio" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9659, 0, 0.2588, 0, 1, 0, -0.2588, 0, 0.9659, -0.32, 0.92, -0.15)
+mesh = SubResource("Mesh_radio")
+surface_material_override/0 = ExtResource("3_metal")
+
+[node name="Laptop" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08, 0.8, 0.06)
+
+[node name="Base" type="MeshInstance3D" parent="Laptop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0125, 0)
+mesh = SubResource("Mesh_base")
+
+[node name="Hinge" type="Node3D" parent="Laptop"]
+transform = Transform3D(1, 0, 0, 0, 0.9659, 0.2588, 0, -0.2588, 0.9659, 0, 0.025, -0.12)
+
+[node name="Lid" type="MeshInstance3D" parent="Laptop/Hinge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0)
+mesh = SubResource("Mesh_lid")
+
+[node name="Display" type="MeshInstance3D" parent="Laptop/Hinge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0.0065)
+mesh = SubResource("Mesh_display")
+
+[node name="Glow" type="OmniLight3D" parent="Laptop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0.25)
+light_color = Color(0.3, 0.6, 1, 1)
+light_energy = 0.6
+omni_range = 2.0
